@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { featuredProduct } from "@/data/products";
 import {
   Search, ShoppingBag, Menu, ChevronDown, ChevronRight, Minus, Plus, X,
   UserRound, Headphones, Mail, Download, ShieldCheck, Clock3, Instagram,
@@ -25,6 +26,9 @@ const categories = [
   "Avaliações e sondagens", "Calendários", "Educação infantil", "Lembrancinhas",
   "Kits e combos", "Painéis", "Leitura e escrita", "Matemática", "Formatura",
 ];
+const CART_STORAGE_KEY = "sua-loja-cart-v1";
+const FAVORITES_STORAGE_KEY = "sua-loja-favorites-v1";
+
 const details = [
   { title: "O que está incluso?", body: "O arquivo acompanha o molde da caixa em PDF e 54 cartões com mensagens diferentes, organizados para impressão." },
   { title: "Como recebo meu arquivo?", body: "Após a confirmação do pagamento, o acesso ao material digital será enviado ao e-mail informado na compra." },
@@ -41,8 +45,41 @@ function StorePage() {
   const [activeTab, setActiveTab] = useState("description");
   const [search, setSearch] = useState("");
   const [added, setAdded] = useState(false);
-  const unitPrice = 10;
-  const total = useMemo(() => (cartCount * unitPrice).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }), [cartCount]);
+  const [searchMessage, setSearchMessage] = useState("");
+  const [favorite, setFavorite] = useState(false);
+  const [storageReady, setStorageReady] = useState(false);
+  const unitPrice = featuredProduct.price;
+  const total = useMemo(() => (cartCount * unitPrice).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }), [cartCount, unitPrice]);
+
+  useEffect(() => {
+    try {
+      const savedCart = window.localStorage.getItem(CART_STORAGE_KEY);
+      const savedFavorites = window.localStorage.getItem(FAVORITES_STORAGE_KEY);
+      if (savedCart) {
+        const parsed = JSON.parse(savedCart) as { productId?: string; quantity?: number }[];
+        const item = parsed.find((entry) => entry.productId === featuredProduct.id);
+        if (item && Number.isFinite(item.quantity)) setCartCount(Math.max(0, Number(item.quantity)));
+      }
+      if (savedFavorites) {
+        const parsed = JSON.parse(savedFavorites) as string[];
+        setFavorite(parsed.includes(featuredProduct.id));
+      }
+    } catch {
+      window.localStorage.removeItem(CART_STORAGE_KEY);
+      window.localStorage.removeItem(FAVORITES_STORAGE_KEY);
+    }
+    setStorageReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!storageReady) return;
+    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartCount > 0 ? [{ productId: featuredProduct.id, quantity: cartCount }] : []));
+  }, [cartCount, storageReady]);
+
+  useEffect(() => {
+    if (!storageReady) return;
+    window.localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorite ? [featuredProduct.id] : []));
+  }, [favorite, storageReady]);
 
   function addToCart() {
     setCartCount((current) => current + quantity);
@@ -52,8 +89,17 @@ function StorePage() {
 
   function submitSearch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (search.trim()) {
+    const query = search.trim().toLocaleLowerCase("pt-BR");
+    if (!query) {
+      setSearchMessage("Digite o nome de um produto para buscar.");
+      return;
+    }
+    const searchableText = `${featuredProduct.name} ${featuredProduct.category} ${featuredProduct.description}`.toLocaleLowerCase("pt-BR");
+    if (searchableText.includes(query)) {
+      setSearchMessage(`Encontramos: ${featuredProduct.name}`);
       document.getElementById("produto")?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      setSearchMessage(`Nenhum produto encontrado para “${search.trim()}”.`);
     }
   }
 
@@ -73,7 +119,7 @@ function StorePage() {
         <div className="mx-auto flex max-w-[1240px] items-center gap-4 px-4 py-5">
           <button className="rounded-lg p-2 lg:hidden" aria-label="Abrir menu" onClick={() => setMobileMenu(!mobileMenu)}><Menu size={23}/></button>
           <a href="#" className="min-w-fit">
-            <span className="block font-serif text-[25px] font-bold tracking-tight text-[#173e43] sm:text-[30px]">Sua Loja</span>
+            <span className="block font-serif text-[25px] font-bold tracking-tight text-[#173e43] sm:text-[30px]">{featuredProduct.storeName}</span>
             <span className="block text-[9px] font-semibold uppercase tracking-[.25em] text-[#b17b55]">materiais digitais</span>
           </a>
           <form onSubmit={submitSearch} className="mx-auto hidden w-full max-w-[510px] items-center rounded-full border border-slate-200 bg-[#f8faf9] px-4 py-2.5 md:flex">
@@ -112,6 +158,8 @@ function StorePage() {
         </div>}
       </header>
 
+      {searchMessage && <div role="status" className="mx-auto max-w-[1160px] px-4 pt-3 text-xs font-medium text-[#315c55]">{searchMessage}</div>}
+
       <div className="bg-[#f4f7f5] py-2.5 text-center text-[11px] font-semibold tracking-wide text-[#315c55] sm:text-xs">
         <PackageCheck className="mr-2 inline-block" size={15}/> PRODUTOS DIGITAIS • ACESSO APÓS A CONFIRMAÇÃO DO PAGAMENTO
       </div>
@@ -131,12 +179,12 @@ function StorePage() {
           </div>
 
           <div className="flex flex-col">
-            <div className="mb-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-[#b17b55]"><span>Natal</span><span className="h-1 w-1 rounded-full bg-[#b17b55]"/><span>Material para imprimir</span></div>
-            <h1 className="font-serif text-[32px] font-bold leading-[1.12] text-[#173e43] sm:text-[40px]">Caixa de Mensagens Natal Cristão</h1>
+            <div className="mb-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-[#b17b55]"><span>{featuredProduct.category}</span><span className="h-1 w-1 rounded-full bg-[#b17b55]"/><span>Material para imprimir</span></div>
+            <h1 className="font-serif text-[32px] font-bold leading-[1.12] text-[#173e43] sm:text-[40px]">{featuredProduct.name}</h1>
             <div className="mt-4 flex items-center gap-2 text-xs text-amber-500"><span>★★★★★</span><span className="text-slate-400">(Avaliações em breve)</span></div>
-            <p className="mt-5 text-[14px] leading-7 text-slate-600">Celebre o verdadeiro sentido do Natal com uma caixa especial de mensagens cristãs. Um material digital pensado para compartilhar fé, esperança e carinho em momentos especiais.</p>
+            <p className="mt-5 text-[14px] leading-7 text-slate-600">{featuredProduct.description}</p>
             <div className="mt-5 border-y border-slate-100 py-5">
-              <div className="flex items-end gap-3"><span className="text-[31px] font-bold tracking-tight text-[#173e43]">R$ 10,00</span><span className="pb-1 text-xs text-slate-400">pagamento único</span></div>
+              <div className="flex items-end gap-3"><span className="text-[31px] font-bold tracking-tight text-[#173e43]">{unitPrice.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span><span className="pb-1 text-xs text-slate-400">pagamento único</span></div>
               <p className="mt-1 text-xs text-slate-500">Produto digital • arquivo em PDF</p>
             </div>
             <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -146,7 +194,7 @@ function StorePage() {
                 <button onClick={() => setQuantity(quantity + 1)} aria-label="Aumentar quantidade" className="px-3 text-slate-500 hover:text-[#173e43]"><Plus size={15}/></button>
               </div>
               <button onClick={addToCart} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-[#173e43] px-5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#24565b]"><ShoppingBag size={17}/> Adicionar ao carrinho</button>
-              <button aria-label="Favoritar produto" className="flex h-12 w-12 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-[#b17b55] hover:text-[#b17b55]"><Heart size={19}/></button>
+              <button aria-label={favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"} aria-pressed={favorite} onClick={() => setFavorite((value) => !value)} className={`flex h-12 w-12 items-center justify-center rounded-lg border transition ${favorite ? "border-rose-200 bg-rose-50 text-rose-600" : "border-slate-200 text-slate-500 hover:border-[#b17b55] hover:text-[#b17b55]"}`}><Heart size={19} fill={favorite ? "currentColor" : "none"}/></button>
             </div>
             {added && <p className="mt-3 text-xs font-semibold text-emerald-700"><Check className="mr-1 inline" size={14}/> Produto adicionado ao carrinho.</p>}
             <div className="mt-7 grid grid-cols-1 gap-3 border-t border-slate-100 pt-5 text-xs text-slate-600 sm:grid-cols-2">
@@ -196,7 +244,7 @@ function StorePage() {
       {cartOpen && <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/40" onClick={() => setCartOpen(false)}>
         <aside className="flex h-full w-full max-w-[420px] flex-col bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
           <div className="flex items-center justify-between border-b border-slate-100 px-5 py-5"><div><p className="font-serif text-xl font-bold text-[#173e43]">Seu carrinho</p><p className="mt-1 text-xs text-slate-400">{cartCount} {cartCount === 1 ? "item" : "itens"}</p></div><button onClick={() => setCartOpen(false)} aria-label="Fechar carrinho" className="rounded-full p-2 hover:bg-slate-100"><X size={20}/></button></div>
-          {cartCount > 0 ? <><div className="flex flex-1 gap-4 p-5"><img src={produto} alt="" className="h-24 w-24 rounded-lg bg-[#f7f5ef] object-contain"/><div className="flex-1"><p className="text-sm font-bold text-[#173e43]">Caixa de Mensagens Natal Cristão</p><p className="mt-1 text-xs text-slate-500">Produto digital • PDF</p><p className="mt-3 text-sm font-bold">R$ 10,00 × {cartCount}</p><button onClick={() => setCartCount(0)} className="mt-2 text-[11px] text-rose-600 underline">Remover</button></div></div><div className="border-t border-slate-100 p-5"><div className="flex justify-between text-sm"><span className="text-slate-500">Subtotal</span><b className="text-[#173e43]">{total}</b></div><p className="mt-3 text-[11px] leading-5 text-slate-400">O pagamento e a entrega dos arquivos serão configurados na próxima etapa do projeto.</p><button disabled className="mt-5 w-full cursor-not-allowed rounded-lg bg-slate-200 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Finalização de compra em configuração</button></div></> : <div className="flex flex-1 flex-col items-center justify-center px-8 text-center"><ShoppingBag size={38} className="text-slate-300"/><p className="mt-4 font-serif text-xl font-bold text-[#173e43]">Seu carrinho está vazio</p><p className="mt-2 text-xs text-slate-500">Adicione um material para continuar.</p><button onClick={() => setCartOpen(false)} className="mt-5 rounded-lg bg-[#173e43] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">Continuar comprando</button></div>}
+          {cartCount > 0 ? <><div className="flex flex-1 gap-4 p-5"><img src={produto} alt="" className="h-24 w-24 rounded-lg bg-[#f7f5ef] object-contain"/><div className="flex-1"><p className="text-sm font-bold text-[#173e43]">{featuredProduct.name}</p><p className="mt-1 text-xs text-slate-500">Produto digital • PDF</p><p className="mt-3 text-sm font-bold">{unitPrice.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} × {cartCount}</p><button onClick={() => setCartCount(0)} className="mt-2 text-[11px] text-rose-600 underline">Remover</button></div></div><div className="border-t border-slate-100 p-5"><div className="flex justify-between text-sm"><span className="text-slate-500">Subtotal</span><b className="text-[#173e43]">{total}</b></div><p className="mt-3 text-[11px] leading-5 text-slate-400">O pagamento e a entrega dos arquivos serão configurados na próxima etapa do projeto.</p><button disabled className="mt-5 w-full cursor-not-allowed rounded-lg bg-slate-200 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Finalização de compra em configuração</button></div></> : <div className="flex flex-1 flex-col items-center justify-center px-8 text-center"><ShoppingBag size={38} className="text-slate-300"/><p className="mt-4 font-serif text-xl font-bold text-[#173e43]">Seu carrinho está vazio</p><p className="mt-2 text-xs text-slate-500">Adicione um material para continuar.</p><button onClick={() => setCartOpen(false)} className="mt-5 rounded-lg bg-[#173e43] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">Continuar comprando</button></div>}
         </aside>
       </div>}
     </div>
