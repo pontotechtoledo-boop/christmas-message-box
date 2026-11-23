@@ -1,124 +1,204 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  Search, ShoppingBag, Menu, ChevronDown, ChevronRight, Minus, Plus, X,
+  UserRound, Headphones, Mail, Download, ShieldCheck, Clock3, Instagram,
+  Facebook, Heart, Share2, Check, PackageCheck, CreditCard, MessageCircle,
+} from "lucide-react";
 import produto from "@/assets/produto.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Caixa de Mensagens de Natal — Ateliê Educar" },
-      { name: "description", content: "Material digital para imprimir: caixa com 54 cartões de mensagens natalinas." },
-      { property: "og:title", content: "Caixa de Mensagens de Natal — Ateliê Educar" },
-      { property: "og:description", content: "Imprima, monte e presenteie com 54 mensagens de fé e carinho." },
+      { title: "Caixa de Mensagens Natal Cristão | Loja" },
+      { name: "description", content: "Material digital de Natal para imprimir. Confira os detalhes e adquira seu arquivo." },
+      { property: "og:title", content: "Caixa de Mensagens Natal Cristão" },
+      { property: "og:description", content: "Material digital para imprimir e compartilhar mensagens especiais." },
       { property: "og:type", content: "product" },
-      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Index,
+  component: StorePage,
 });
 
-const categorias = ["Alfabetização", "Datas comemorativas", "Natal", "Apostilas", "Avaliações", "Calendários", "Lembrancinhas"];
-const relacionados = ["Kit Lembrancinha de Natal", "Cartões de Ano Novo", "Calendário 2027", "Apostila de Férias"];
+const categories = [
+  "Novidades", "Natal", "Datas comemorativas", "Alfabetização", "Apostilas",
+  "Avaliações e sondagens", "Calendários", "Educação infantil", "Lembrancinhas",
+  "Kits e combos", "Painéis", "Leitura e escrita", "Matemática", "Formatura",
+];
+const details = [
+  { title: "O que está incluso?", body: "O arquivo acompanha o molde da caixa em PDF e 54 cartões com mensagens diferentes, organizados para impressão." },
+  { title: "Como recebo meu arquivo?", body: "Após a confirmação do pagamento, o acesso ao material digital será enviado ao e-mail informado na compra." },
+  { title: "Posso editar o material?", body: "Este produto é disponibilizado em PDF não editável. Confira as características antes de concluir seu pedido." },
+  { title: "Por quanto tempo tenho acesso?", body: "O prazo de acesso e as condições de download serão informados na finalização do pedido." },
+];
 
-function Index() {
-  const [qtd, setQtd] = useState(1);
-  const [img, setImg] = useState(0);
+function StorePage() {
+  const [quantity, setQuantity] = useState(1);
+  const [cartCount, setCartCount] = useState(0);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [mobileMenu, setMobileMenu] = useState(false);
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("description");
+  const [search, setSearch] = useState("");
+  const [added, setAdded] = useState(false);
+  const unitPrice = 10;
+  const total = useMemo(() => (cartCount * unitPrice).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }), [cartCount]);
+
+  function addToCart() {
+    setCartCount((current) => current + quantity);
+    setAdded(true);
+    setCartOpen(true);
+  }
+
+  function submitSearch(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (search.trim()) {
+      document.getElementById("produto")?.scrollIntoView({ behavior: "smooth" });
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="bg-primary py-2 text-center text-xs text-primary-foreground">
-        Material 100% digital • Receba por e-mail após o pagamento
-      </div>
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <span className="font-display text-2xl text-primary">Ateliê Educar</span>
-          <nav className="hidden gap-6 text-sm md:flex">
-            <a href="#">Início</a><a href="#">Loja</a><a href="#">Categorias</a><a href="#">Contato</a>
-          </nav>
-          <span className="rounded-full bg-secondary px-3 py-1 text-sm">🛒 0</span>
+    <div className="store-shell min-h-screen bg-white text-slate-800">
+      <div className="bg-[#173e43] text-white">
+        <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-2 px-4 py-2 text-[11px] sm:text-xs">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <a href="mailto:contato@sualoja.com" className="inline-flex items-center gap-2 hover:text-[#c6dfd5]"><Mail size={13}/> contato@sualoja.com</a>
+            <a href="#atendimento" className="hidden items-center gap-2 hover:text-[#c6dfd5] sm:inline-flex"><Headphones size={13}/> Atendimento</a>
+          </div>
+          <a href="#minha-conta" className="inline-flex items-center gap-2 hover:text-[#c6dfd5]"><UserRound size={13}/> Área do cliente</a>
         </div>
+      </div>
+
+      <header className="border-b border-slate-100 bg-white">
+        <div className="mx-auto flex max-w-[1240px] items-center gap-4 px-4 py-5">
+          <button className="rounded-lg p-2 lg:hidden" aria-label="Abrir menu" onClick={() => setMobileMenu(!mobileMenu)}><Menu size={23}/></button>
+          <a href="#" className="min-w-fit">
+            <span className="block font-serif text-[25px] font-bold tracking-tight text-[#173e43] sm:text-[30px]">Sua Loja</span>
+            <span className="block text-[9px] font-semibold uppercase tracking-[.25em] text-[#b17b55]">materiais digitais</span>
+          </a>
+          <form onSubmit={submitSearch} className="mx-auto hidden w-full max-w-[510px] items-center rounded-full border border-slate-200 bg-[#f8faf9] px-4 py-2.5 md:flex">
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="O que você está procurando?" className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400"/>
+            <button aria-label="Buscar" type="submit" className="text-[#173e43]"><Search size={19}/></button>
+          </form>
+          <div className="ml-auto flex items-center gap-2 sm:gap-4">
+            <a href="#minha-conta" className="hidden items-center gap-2 text-xs font-semibold text-slate-600 hover:text-[#173e43] sm:flex"><UserRound size={19}/> Minha conta</a>
+            <button onClick={() => setCartOpen(true)} className="relative flex items-center gap-2 rounded-full bg-[#edf4f1] px-3 py-2.5 text-xs font-bold text-[#173e43] sm:px-4">
+              <ShoppingBag size={18}/><span className="hidden sm:inline">Carrinho</span>
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#b17b55] px-1 text-[10px] text-white">{cartCount}</span>
+            </button>
+          </div>
+        </div>
+        <form onSubmit={submitSearch} className="mx-4 mb-4 flex items-center rounded-full border border-slate-200 bg-[#f8faf9] px-4 py-2 md:hidden">
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar produtos..." className="w-full bg-transparent text-sm outline-none"/>
+          <button aria-label="Buscar" type="submit"><Search size={18}/></button>
+        </form>
+        <nav className="hidden border-t border-slate-100 lg:block">
+          <div className="mx-auto flex max-w-[1240px] items-center justify-center gap-8 px-4 py-3 text-[12px] font-bold uppercase tracking-wide text-slate-600">
+            <a href="#" className="hover:text-[#b17b55]">Início</a>
+            <div className="relative" onMouseEnter={() => setCategoryOpen(true)} onMouseLeave={() => setCategoryOpen(false)}>
+              <button onClick={() => setCategoryOpen(!categoryOpen)} className="inline-flex items-center gap-1 hover:text-[#b17b55]">Produtos <ChevronDown size={14}/></button>
+              {categoryOpen && <div className="absolute left-0 top-full z-30 grid w-[460px] grid-cols-2 gap-x-6 gap-y-3 rounded-xl border border-slate-100 bg-white p-5 text-[11px] font-medium normal-case tracking-normal shadow-xl">
+                {categories.map((category) => <a key={category} href="#categorias" className="hover:text-[#b17b55]">{category}</a>)}
+              </div>}
+            </div>
+            <a href="#sobre" className="hover:text-[#b17b55]">Sobre</a>
+            <a href="#blog" className="hover:text-[#b17b55]">Blog</a>
+            <a href="#contato" className="hover:text-[#b17b55]">Contato</a>
+            <a href="#atendimento" className="hover:text-[#b17b55]">Suporte</a>
+          </div>
+        </nav>
+        {mobileMenu && <div className="border-t border-slate-100 bg-white px-5 py-4 lg:hidden">
+          <div className="grid grid-cols-2 gap-3 text-sm">{["Início", "Produtos", "Sobre", "Blog", "Contato", ...categories].map((item) => <a key={item} href="#categorias" onClick={() => setMobileMenu(false)}>{item}</a>)}</div>
+        </div>}
       </header>
 
-      <main className="mx-auto grid max-w-6xl gap-10 px-4 py-8 md:grid-cols-2">
-        <section>
-          <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
-            <img src={produto} alt="Caixa de mensagens de Natal" width={1024} height={1024}
-              className={`w-full transition ${img % 2 ? "scale-110" : ""}`} />
+      <div className="bg-[#f4f7f5] py-2.5 text-center text-[11px] font-semibold tracking-wide text-[#315c55] sm:text-xs">
+        <PackageCheck className="mr-2 inline-block" size={15}/> PRODUTOS DIGITAIS • ACESSO APÓS A CONFIRMAÇÃO DO PAGAMENTO
+      </div>
+
+      <main className="mx-auto max-w-[1160px] px-4 pb-16 pt-7 sm:pt-10">
+        <div className="mb-7 flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
+          <a href="#" className="hover:text-[#173e43]">Início</a><ChevronRight size={12}/><a href="#categorias" className="hover:text-[#173e43]">Natal</a><ChevronRight size={12}/><span className="text-slate-600">Caixa de Mensagens Natal Cristão</span>
+        </div>
+
+        <section id="produto" className="grid gap-9 lg:grid-cols-[1.04fr_.96fr] lg:gap-14">
+          <div>
+            <div className="relative overflow-hidden rounded-2xl bg-[#f7f5ef]">
+              <span className="absolute left-4 top-4 z-10 rounded-full bg-[#173e43] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white">Arquivo digital</span>
+              <img src={produto} alt="Prévia ilustrativa da Caixa de Mensagens Natal Cristão" className="aspect-square w-full object-contain mix-blend-multiply"/>
+            </div>
+            <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400"><span>Imagem ilustrativa do produto</span><span className="inline-flex items-center gap-1"><Share2 size={13}/> Compartilhar</span></div>
           </div>
-          <div className="mt-3 grid grid-cols-5 gap-2">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <button key={i} onClick={() => setImg(i)}
-                className={`overflow-hidden rounded-lg border-2 ${img === i ? "border-primary" : "border-transparent"}`}>
-                <img src={produto} alt="" loading="lazy" width={1024} height={1024} />
-              </button>
-            ))}
+
+          <div className="flex flex-col">
+            <div className="mb-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-[#b17b55]"><span>Natal</span><span className="h-1 w-1 rounded-full bg-[#b17b55]"/><span>Material para imprimir</span></div>
+            <h1 className="font-serif text-[32px] font-bold leading-[1.12] text-[#173e43] sm:text-[40px]">Caixa de Mensagens Natal Cristão</h1>
+            <div className="mt-4 flex items-center gap-2 text-xs text-amber-500"><span>★★★★★</span><span className="text-slate-400">(Avaliações em breve)</span></div>
+            <p className="mt-5 text-[14px] leading-7 text-slate-600">Celebre o verdadeiro sentido do Natal com uma caixa especial de mensagens cristãs. Um material digital pensado para compartilhar fé, esperança e carinho em momentos especiais.</p>
+            <div className="mt-5 border-y border-slate-100 py-5">
+              <div className="flex items-end gap-3"><span className="text-[31px] font-bold tracking-tight text-[#173e43]">R$ 10,00</span><span className="pb-1 text-xs text-slate-400">pagamento único</span></div>
+              <p className="mt-1 text-xs text-slate-500">Produto digital • arquivo em PDF</p>
+            </div>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <div className="flex h-12 items-center rounded-lg border border-slate-200">
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Diminuir quantidade" className="px-3 text-slate-500 hover:text-[#173e43]"><Minus size={15}/></button>
+                <span className="w-7 text-center text-sm font-bold">{quantity}</span>
+                <button onClick={() => setQuantity(quantity + 1)} aria-label="Aumentar quantidade" className="px-3 text-slate-500 hover:text-[#173e43]"><Plus size={15}/></button>
+              </div>
+              <button onClick={addToCart} className="flex h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-[#173e43] px-5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#24565b]"><ShoppingBag size={17}/> Adicionar ao carrinho</button>
+              <button aria-label="Favoritar produto" className="flex h-12 w-12 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-[#b17b55] hover:text-[#b17b55]"><Heart size={19}/></button>
+            </div>
+            {added && <p className="mt-3 text-xs font-semibold text-emerald-700"><Check className="mr-1 inline" size={14}/> Produto adicionado ao carrinho.</p>}
+            <div className="mt-7 grid grid-cols-1 gap-3 border-t border-slate-100 pt-5 text-xs text-slate-600 sm:grid-cols-2">
+              <div className="flex items-center gap-3"><Download className="text-[#b17b55]" size={19}/><span><b className="block text-slate-800">Download digital</b>Sem frete ou espera</span></div>
+              <div className="flex items-center gap-3"><Mail className="text-[#b17b55]" size={19}/><span><b className="block text-slate-800">Entrega por e-mail</b>Após confirmação</span></div>
+              <div className="flex items-center gap-3"><ShieldCheck className="text-[#b17b55]" size={19}/><span><b className="block text-slate-800">Compra protegida</b>Pagamento seguro</span></div>
+              <div className="flex items-center gap-3"><Clock3 className="text-[#b17b55]" size={19}/><span><b className="block text-slate-800">Acesso ao arquivo</b>Consulte as condições</span></div>
+            </div>
           </div>
         </section>
 
-        <section>
-          <p className="text-xs uppercase tracking-widest text-accent-foreground">Natal • Lembrancinhas</p>
-          <h1 className="mt-2 font-display text-4xl leading-tight">Caixa de Mensagens de Natal Cristão</h1>
-          <p className="mt-4 font-display text-3xl text-primary">R$ 10,00</p>
-
-          <div className="mt-6 flex items-center gap-3">
-            <div className="flex items-center rounded-full border border-border">
-              <button className="px-4 py-2" onClick={() => setQtd(Math.max(1, qtd - 1))}>−</button>
-              <span className="w-6 text-center">{qtd}</span>
-              <button className="px-4 py-2" onClick={() => setQtd(qtd + 1)}>+</button>
-            </div>
-            <button className="flex-1 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground shadow-card transition hover:opacity-90">
-              Adicionar ao carrinho
-            </button>
+        <section className="mt-14 border-y border-slate-100">
+          <div className="flex flex-wrap gap-7 border-b border-slate-100 text-xs font-bold uppercase tracking-wider">
+            <button onClick={() => setActiveTab("description")} className={`border-b-2 py-4 ${activeTab === "description" ? "border-[#b17b55] text-[#173e43]" : "border-transparent text-slate-400"}`}>Descrição</button>
+            <button onClick={() => setActiveTab("delivery")} className={`border-b-2 py-4 ${activeTab === "delivery" ? "border-[#b17b55] text-[#173e43]" : "border-transparent text-slate-400"}`}>Entrega e download</button>
+            <button onClick={() => setActiveTab("info")} className={`border-b-2 py-4 ${activeTab === "info" ? "border-[#b17b55] text-[#173e43]" : "border-transparent text-slate-400"}`}>Informações</button>
           </div>
-
-          <div className="mt-8 space-y-4 text-sm leading-relaxed text-muted-foreground">
-            <p>Leve esperança e carinho neste fim de ano com uma caixinha cheia de mensagens inspiradoras para distribuir na escola, no trabalho ou em família.</p>
-            <div className="rounded-xl bg-secondary p-4 text-secondary-foreground">
-              <p className="font-semibold">📦 O que vem no arquivo</p>
-              <ul className="mt-2 space-y-1">
-                <li>✔ Molde da caixa (18×18 cm) em PDF</li>
-                <li>✔ 54 cartões com mensagens diferentes (9 por folha)</li>
-                <li>✔ Dica: acompanhe cada cartão com um docinho</li>
-              </ul>
-            </div>
-            <p className="font-semibold text-foreground">Arquivo não editável.</p>
+          <div className="max-w-3xl py-7 text-sm leading-7 text-slate-600">
+            {activeTab === "description" && <><h2 className="mb-3 font-serif text-2xl font-bold text-[#173e43]">Sobre o material</h2><p>A Caixa de Mensagens Natal Cristão é uma proposta delicada para celebrar o Natal e compartilhar palavras de fé, acolhimento e esperança. Ideal para lembranças, confraternizações, atividades escolares e pequenos gestos de carinho.</p><h3 className="mb-2 mt-6 font-bold text-slate-800">O que está incluso:</h3><ul className="list-disc space-y-1 pl-5"><li>1 modelo de caixa para montar, em PDF.</li><li>54 cartões com mensagens diferentes, organizados para impressão.</li><li>Material digital não editável.</li></ul><p className="mt-4">Sugestão: coloque um doce junto ao cartão para deixar a lembrança ainda mais especial.</p></>}
+            {activeTab === "delivery" && <><h2 className="mb-3 font-serif text-2xl font-bold text-[#173e43]">Receba sem sair de casa</h2><p>Por se tratar de um produto digital, não há envio físico. Após a confirmação do pagamento, as instruções para acessar o arquivo serão encaminhadas ao e-mail cadastrado. Verifique também a caixa de spam ou lixo eletrônico.</p></>}
+            {activeTab === "info" && <><h2 className="mb-3 font-serif text-2xl font-bold text-[#173e43]">Informações importantes</h2><p>Confira atentamente a descrição, o formato e os requisitos do material antes da compra. O arquivo é digital e não editável. As condições de acesso, suporte e eventuais solicitações devem seguir a política da loja, apresentada no checkout.</p></>}
           </div>
+        </section>
 
-          <details className="mt-6 rounded-xl border border-border p-4 text-sm" open>
-            <summary className="cursor-pointer font-semibold">Como recebo meu material?</summary>
-            <ul className="mt-3 list-disc space-y-1 pl-5 text-muted-foreground">
-              <li>O link de download chega no seu e-mail após a confirmação do pagamento.</li>
-              <li>Download disponível por 365 dias — salve no seu dispositivo.</li>
-              <li>Por ser digital, não há trocas ou reembolsos.</li>
-              <li>Pagamento por Pix ou cartão.</li>
-            </ul>
-          </details>
+        <section className="mt-14 grid gap-10 lg:grid-cols-[.8fr_1.2fr]">
+          <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-[#b17b55]">Dúvidas frequentes</p><h2 className="mt-2 font-serif text-3xl font-bold text-[#173e43]">Antes de comprar</h2><p className="mt-3 text-sm leading-6 text-slate-500">Separamos algumas respostas para ajudar você a aproveitar seu material.</p></div>
+          <div className="divide-y divide-slate-100 border-y border-slate-100">{details.map((item) => <details key={item.title} className="group py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold text-slate-700">{item.title}<Plus size={17} className="shrink-0 text-[#b17b55] group-open:rotate-45"/></summary><p className="pt-3 text-sm leading-6 text-slate-500">{item.body}</p></details>)}</div>
+        </section>
+
+        <section id="categorias" className="mt-16 rounded-2xl bg-[#f4f7f5] px-5 py-9 sm:px-9">
+          <p className="text-center text-[10px] font-bold uppercase tracking-[.2em] text-[#b17b55]">Explore a loja</p>
+          <h2 className="mt-2 text-center font-serif text-3xl font-bold text-[#173e43]">Encontre seu próximo material</h2>
+          <div className="mt-7 flex flex-wrap justify-center gap-2">{categories.map((category) => <a href="#produto" key={category} className="rounded-full border border-[#dce7e1] bg-white px-4 py-2 text-xs font-semibold text-[#315c55] transition hover:border-[#b17b55] hover:text-[#b17b55]">{category}</a>)}</div>
         </section>
       </main>
 
-      <section className="mx-auto max-w-6xl px-4 pb-10">
-        <h2 className="font-display text-2xl">Você também pode gostar</h2>
-        <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-          {relacionados.map((r) => (
-            <div key={r} className="rounded-xl border border-border bg-card p-3">
-              <img src={produto} alt={r} loading="lazy" width={1024} height={1024} className="rounded-lg" />
-              <p className="mt-2 text-sm font-medium">{r}</p>
-              <p className="text-sm text-primary">R$ 10,00</p>
-            </div>
-          ))}
+      <footer className="bg-[#173e43] text-white">
+        <div className="mx-auto grid max-w-[1160px] gap-9 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
+          <div><span className="font-serif text-2xl font-bold">Sua Loja</span><p className="mt-3 max-w-xs text-xs leading-6 text-white/65">Materiais digitais preparados com carinho para inspirar, ensinar e tornar cada ocasião especial.</p><div className="mt-4 flex gap-3"><a href="#instagram" aria-label="Instagram" className="rounded-full bg-white/10 p-2"><Instagram size={16}/></a><a href="#facebook" aria-label="Facebook" className="rounded-full bg-white/10 p-2"><Facebook size={16}/></a></div></div>
+          <div><h3 className="text-xs font-bold uppercase tracking-widest">Links úteis</h3><ul className="mt-4 space-y-3 text-xs text-white/65"><li><a href="#sobre" className="hover:text-white">Sobre a loja</a></li><li><a href="#contato" className="hover:text-white">Contato</a></li><li><a href="#politicas" className="hover:text-white">Política de privacidade</a></li><li><a href="#termos" className="hover:text-white">Termos de uso</a></li></ul></div>
+          <div id="atendimento"><h3 className="text-xs font-bold uppercase tracking-widest">Atendimento</h3><ul className="mt-4 space-y-3 text-xs text-white/65"><li className="flex items-center gap-2"><Mail size={14}/> contato@sualoja.com</li><li className="flex items-center gap-2"><MessageCircle size={14}/> Suporte via WhatsApp</li><li>Segunda a sexta, em horário comercial</li></ul></div>
+          <div id="minha-conta"><h3 className="text-xs font-bold uppercase tracking-widest">Minha conta</h3><ul className="mt-4 space-y-3 text-xs text-white/65"><li><a href="#pedidos" className="hover:text-white">Meus pedidos</a></li><li><a href="#downloads" className="hover:text-white">Meus downloads</a></li><li><a href="#dados" className="hover:text-white">Dados da conta</a></li></ul></div>
         </div>
-      </section>
-
-      <footer className="bg-primary text-primary-foreground">
-        <div className="mx-auto max-w-6xl px-4 py-8">
-          <h3 className="font-display text-xl">Categorias</h3>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {categorias.map((c) => (
-              <span key={c} className="rounded-full border border-primary-foreground/30 px-3 py-1 text-xs">{c}</span>
-            ))}
-          </div>
-          <p className="mt-6 text-xs opacity-70">© 2026 Ateliê Educar — materiais pedagógicos digitais</p>
-        </div>
+        <div className="border-t border-white/10 px-4 py-5 text-center text-[10px] text-white/45">© 2026 Sua Loja. Todos os direitos reservados.</div>
       </footer>
+
+      {cartOpen && <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/40" onClick={() => setCartOpen(false)}>
+        <aside className="flex h-full w-full max-w-[420px] flex-col bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
+          <div className="flex items-center justify-between border-b border-slate-100 px-5 py-5"><div><p className="font-serif text-xl font-bold text-[#173e43]">Seu carrinho</p><p className="mt-1 text-xs text-slate-400">{cartCount} {cartCount === 1 ? "item" : "itens"}</p></div><button onClick={() => setCartOpen(false)} aria-label="Fechar carrinho" className="rounded-full p-2 hover:bg-slate-100"><X size={20}/></button></div>
+          {cartCount > 0 ? <><div className="flex flex-1 gap-4 p-5"><img src={produto} alt="" className="h-24 w-24 rounded-lg bg-[#f7f5ef] object-contain"/><div className="flex-1"><p className="text-sm font-bold text-[#173e43]">Caixa de Mensagens Natal Cristão</p><p className="mt-1 text-xs text-slate-500">Produto digital • PDF</p><p className="mt-3 text-sm font-bold">R$ 10,00 × {cartCount}</p><button onClick={() => setCartCount(0)} className="mt-2 text-[11px] text-rose-600 underline">Remover</button></div></div><div className="border-t border-slate-100 p-5"><div className="flex justify-between text-sm"><span className="text-slate-500">Subtotal</span><b className="text-[#173e43]">{total}</b></div><p className="mt-3 text-[11px] leading-5 text-slate-400">O pagamento e a entrega dos arquivos serão configurados na próxima etapa do projeto.</p><button disabled className="mt-5 w-full cursor-not-allowed rounded-lg bg-slate-200 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Finalização de compra em configuração</button></div></> : <div className="flex flex-1 flex-col items-center justify-center px-8 text-center"><ShoppingBag size={38} className="text-slate-300"/><p className="mt-4 font-serif text-xl font-bold text-[#173e43]">Seu carrinho está vazio</p><p className="mt-2 text-xs text-slate-500">Adicione um material para continuar.</p><button onClick={() => setCartOpen(false)} className="mt-5 rounded-lg bg-[#173e43] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">Continuar comprando</button></div>}
+        </aside>
+      </div>}
     </div>
   );
 }
