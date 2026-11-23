@@ -81,6 +81,28 @@ function StorePage() {
     window.localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorite ? [featuredProduct.id] : []));
   }, [favorite, storageReady]);
 
+  async function shareProduct() {
+    const shareData = {
+      title: featuredProduct.name,
+      text: featuredProduct.description,
+      url: window.location.href,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareData.url);
+        setSearchMessage("Link do produto copiado para compartilhar.");
+      } else {
+        setSearchMessage("Copie o endereço desta página para compartilhar o produto.");
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name !== "AbortError") {
+        setSearchMessage("Não foi possível compartilhar automaticamente. Copie o link da página.");
+      }
+    }
+  }
+
   function addToCart() {
     setCartCount((current) => current + quantity);
     setAdded(true);
@@ -175,7 +197,7 @@ function StorePage() {
               <span className="absolute left-4 top-4 z-10 rounded-full bg-[#173e43] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white">Arquivo digital</span>
               <img src={produto} alt="Prévia ilustrativa da Caixa de Mensagens Natal Cristão" className="aspect-square w-full object-contain mix-blend-multiply"/>
             </div>
-            <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400"><span>Imagem ilustrativa do produto</span><span className="inline-flex items-center gap-1"><Share2 size={13}/> Compartilhar</span></div>
+            <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400"><span>Imagem ilustrativa do produto</span><button type="button" onClick={shareProduct} className="inline-flex items-center gap-1 hover:text-[#173e43]"><Share2 size={13}/> Compartilhar</button></div>
           </div>
 
           <div className="flex flex-col">
@@ -244,7 +266,7 @@ function StorePage() {
       {cartOpen && <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/40" onClick={() => setCartOpen(false)}>
         <aside className="flex h-full w-full max-w-[420px] flex-col bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
           <div className="flex items-center justify-between border-b border-slate-100 px-5 py-5"><div><p className="font-serif text-xl font-bold text-[#173e43]">Seu carrinho</p><p className="mt-1 text-xs text-slate-400">{cartCount} {cartCount === 1 ? "item" : "itens"}</p></div><button onClick={() => setCartOpen(false)} aria-label="Fechar carrinho" className="rounded-full p-2 hover:bg-slate-100"><X size={20}/></button></div>
-          {cartCount > 0 ? <><div className="flex flex-1 gap-4 p-5"><img src={produto} alt="" className="h-24 w-24 rounded-lg bg-[#f7f5ef] object-contain"/><div className="flex-1"><p className="text-sm font-bold text-[#173e43]">{featuredProduct.name}</p><p className="mt-1 text-xs text-slate-500">Produto digital • PDF</p><p className="mt-3 text-sm font-bold">{unitPrice.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} × {cartCount}</p><button onClick={() => setCartCount(0)} className="mt-2 text-[11px] text-rose-600 underline">Remover</button></div></div><div className="border-t border-slate-100 p-5"><div className="flex justify-between text-sm"><span className="text-slate-500">Subtotal</span><b className="text-[#173e43]">{total}</b></div><p className="mt-3 text-[11px] leading-5 text-slate-400">O pagamento e a entrega dos arquivos serão configurados na próxima etapa do projeto.</p><button disabled className="mt-5 w-full cursor-not-allowed rounded-lg bg-slate-200 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Finalização de compra em configuração</button></div></> : <div className="flex flex-1 flex-col items-center justify-center px-8 text-center"><ShoppingBag size={38} className="text-slate-300"/><p className="mt-4 font-serif text-xl font-bold text-[#173e43]">Seu carrinho está vazio</p><p className="mt-2 text-xs text-slate-500">Adicione um material para continuar.</p><button onClick={() => setCartOpen(false)} className="mt-5 rounded-lg bg-[#173e43] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">Continuar comprando</button></div>}
+          {cartCount > 0 ? <><div className="flex flex-1 gap-4 p-5"><img src={produto} alt="" className="h-24 w-24 rounded-lg bg-[#f7f5ef] object-contain"/><div className="flex-1"><p className="text-sm font-bold text-[#173e43]">{featuredProduct.name}</p><p className="mt-1 text-xs text-slate-500">Produto digital • {featuredProduct.format}</p><p className="mt-3 text-sm font-bold">{unitPrice.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} cada</p><div className="mt-3 flex items-center gap-3"><div className="flex h-9 items-center rounded-md border border-slate-200"><button type="button" aria-label="Diminuir quantidade no carrinho" onClick={() => setCartCount((value) => Math.max(0, value - 1))} className="px-2 text-slate-500"><Minus size={14}/></button><span className="w-6 text-center text-xs font-bold">{cartCount}</span><button type="button" aria-label="Aumentar quantidade no carrinho" onClick={() => setCartCount((value) => value + 1)} className="px-2 text-slate-500"><Plus size={14}/></button></div><button onClick={() => setCartCount(0)} className="text-[11px] text-rose-600 underline">Remover</button></div></div></div><div className="border-t border-slate-100 p-5"><div className="flex justify-between text-sm"><span className="text-slate-500">Subtotal</span><b className="text-[#173e43]">{total}</b></div><p className="mt-3 text-[11px] leading-5 text-slate-400">O pagamento e a entrega dos arquivos serão configurados na próxima etapa do projeto.</p><button onClick={() => setCartCount(0)} className="mt-3 w-full rounded-lg border border-slate-200 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">Esvaziar carrinho</button><button disabled className="mt-3 w-full cursor-not-allowed rounded-lg bg-slate-200 py-3 text-xs font-bold uppercase tracking-wider text-slate-500">Finalização de compra em configuração</button></div></> : <div className="flex flex-1 flex-col items-center justify-center px-8 text-center"><ShoppingBag size={38} className="text-slate-300"/><p className="mt-4 font-serif text-xl font-bold text-[#173e43]">Seu carrinho está vazio</p><p className="mt-2 text-xs text-slate-500">Adicione um material para continuar.</p><button onClick={() => setCartOpen(false)} className="mt-5 rounded-lg bg-[#173e43] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">Continuar comprando</button></div>}
         </aside>
       </div>}
     </div>
