@@ -16,7 +16,7 @@ export type StoreProduct = {
   details?: string[];
 };
 
-export const storeName = "Sua Loja";
+export const storeName = "Lírio Doce";
 
 export const catalogCategories = [
   "Caixas e combos",
