@@ -1,4 +1,4 @@
-import { ArrowUpRight, Instagram, Mail, MessageCircle, Sparkles, UserRound, ShieldCheck, FileText } from "lucide-react";
+import { ArrowUpRight, MessageCircle, Sparkles, UserRound } from "lucide-react";
 import { catalogCategories, slugify, storeName } from "@/data/products";
 
 export function StoreHeader() {
@@ -14,10 +14,11 @@ export function StoreHeader() {
         <details className="group relative"><summary className="cursor-pointer list-none transition hover:text-[#ff5b69]">Categorias <span className="ml-1">⌄</span></summary><div className="absolute left-0 top-full z-30 mt-4 max-h-96 w-72 overflow-auto rounded-2xl border border-[#eee9e5] bg-white p-2 normal-case shadow-2xl">{catalogCategories.map((category) => <a key={category} href={"/categoria/" + slugify(category)} className="block rounded-xl px-4 py-3 text-xs font-bold text-[#514958] hover:bg-[#fff1f0] hover:text-[#e84959]">{category}</a>)}</div></details>
         <a href="/#sobre" className="transition hover:text-[#ff5b69]">Sobre</a>
         <a href="/minha-conta" className="inline-flex items-center gap-1 transition hover:text-[#ff5b69]"><UserRound size={14}/> Minha conta</a>
+        <a href="https://wa.me/5545988018222" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#159b50] transition hover:text-[#ff5b69]"><MessageCircle size={14}/> Suporte</a>
       </nav>
       <div className="flex items-center gap-2"><a href="/minha-conta" aria-label="Minha conta" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#eee9e5] text-[#251d2d] hover:border-[#ff5b69] hover:text-[#ff5b69] lg:hidden"><UserRound size={17}/></a><a href="/produtos" className="inline-flex items-center gap-2 rounded-full bg-[#251d2d] px-5 py-3 text-[10px] font-black uppercase tracking-[.12em] text-white transition hover:bg-[#ff5b69]">Explorar loja <ArrowUpRight size={14}/></a></div>
     </div>
-    <nav aria-label="Navegação mobile" className="flex gap-5 overflow-x-auto border-t border-[#eee9e5] px-4 py-3 text-[10px] font-extrabold uppercase tracking-wider text-[#625a67] lg:hidden"><a href="/">Início</a><a href="/produtos">Produtos</a><a href="/#categorias">Categorias</a><a href="/#sobre">Sobre</a><a href="/minha-conta">Minha conta</a></nav>
+    <nav aria-label="Navegação mobile" className="flex gap-5 overflow-x-auto border-t border-[#eee9e5] px-4 py-3 text-[10px] font-extrabold uppercase tracking-wider text-[#625a67] lg:hidden"><a href="/">Início</a><a href="/produtos">Produtos</a><a href="/#categorias">Categorias</a><a href="/#sobre">Sobre</a><a href="/minha-conta">Minha conta</a><a href="https://wa.me/5545988018222" target="_blank" rel="noreferrer">Suporte</a></nav>
   </header>;
 }
 
@@ -29,5 +30,6 @@ export function StoreFooter() {
       <div><h2 className="text-[10px] font-black uppercase tracking-[.2em] text-[#ff8b91]">Atendimento</h2><p className="mt-5 text-sm leading-6 text-white/65">Precisa de ajuda com um produto ou download?</p><a href="https://wa.me/5545988018222?text=Ol%C3%A1%21%20Preciso%20de%20suporte%20com%20um%20produto%20digital." target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-[#8ff0b1] hover:text-white"><MessageCircle size={16}/> Chamar no WhatsApp</a><div className="mt-5 space-y-2 text-xs text-white/55"><a className="block hover:text-white" href="/politica-de-privacidade">Política de privacidade</a><a className="block hover:text-white" href="/termos-de-uso">Termos de uso</a></div></div>
     </div>
     <div className="border-t border-white/10 px-4 py-5 text-center text-[10px] text-white/40">© {new Date().getFullYear()} {storeName}. Todos os direitos reservados.</div>
+  <a href="https://wa.me/5545988018222?text=Ol%C3%A1%21%20Preciso%20de%20suporte." target="_blank" rel="noreferrer" aria-label="Falar com o suporte pelo WhatsApp" className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-black/20 transition hover:scale-105 hover:bg-[#1fb85a]"><MessageCircle size={25}/></a>
   </footer>;
 }
