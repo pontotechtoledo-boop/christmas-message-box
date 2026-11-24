@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { featuredProduct } from "@/data/products";
+import { featuredProduct, slugify } from "@/data/products";
 import {
   Search, ShoppingBag, Menu, ChevronDown, ChevronRight, Minus, Plus, X,
   UserRound, Headphones, Mail, Download, ShieldCheck, Clock3, Instagram,
@@ -166,17 +166,17 @@ function StorePage() {
             <div className="relative" onMouseEnter={() => setCategoryOpen(true)} onMouseLeave={() => setCategoryOpen(false)}>
               <button onClick={() => setCategoryOpen(!categoryOpen)} className="inline-flex items-center gap-1 hover:text-[#b17b55]">Produtos <ChevronDown size={14}/></button>
               {categoryOpen && <div className="absolute left-0 top-full z-30 grid w-[460px] grid-cols-2 gap-x-6 gap-y-3 rounded-xl border border-slate-100 bg-white p-5 text-[11px] font-medium normal-case tracking-normal shadow-xl">
-                {categories.map((category) => <a key={category} href="#categorias" className="hover:text-[#b17b55]">{category}</a>)}
+                {categories.map((category) => <a key={category} href={`/categoria/${slugify(category)}`} className="hover:text-[#b17b55]">{category}</a>)}
               </div>}
             </div>
-            <a href="#sobre" className="hover:text-[#b17b55]">Sobre</a>
+            <a href="/produtos" className="hover:text-[#b17b55]">Todos os produtos</a><a href="#sobre" className="hover:text-[#b17b55]">Sobre</a>
             <a href="#blog" className="hover:text-[#b17b55]">Blog</a>
             <a href="#contato" className="hover:text-[#b17b55]">Contato</a>
             <a href="#atendimento" className="hover:text-[#b17b55]">Suporte</a>
           </div>
         </nav>
         {mobileMenu && <div className="border-t border-slate-100 bg-white px-5 py-4 lg:hidden">
-          <div className="grid grid-cols-2 gap-3 text-sm">{["Início", "Produtos", "Sobre", "Blog", "Contato", ...categories].map((item) => <a key={item} href="#categorias" onClick={() => setMobileMenu(false)}>{item}</a>)}</div>
+          <div className="grid grid-cols-2 gap-3 text-sm">{["Início", "Produtos", "Sobre", "Blog", "Contato", ...categories].map((item) => <a key={item} href="/produtos" onClick={() => setMobileMenu(false)}>{item}</a>)}</div>
         </div>}
       </header>
 
