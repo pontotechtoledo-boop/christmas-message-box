@@ -3,10 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2, ShieldCheck } from "lucide-react";
 import { StoreFooter, StoreHeader } from "@/components/store-layout";
 import { CartItem, clearCart, getCartSubtotal, readCart, removeFromCart, updateCartQuantity } from "@/lib/cart";
+import produtoImage from "@/assets/produto.jpg";
+import { storeName } from "@/data/products";
 
 export const Route = createFileRoute("/carrinho")({
   head: () => ({ meta: [
-    { title: "Meu carrinho | Sua Loja" },
+    { title: "Meu carrinho | " + storeName },
     { name: "description", content: "Revise os produtos digitais adicionados ao carrinho." },
   ]}),
   component: CartPage,
@@ -47,7 +49,7 @@ function CartPage() {
       </section> : <div className="mt-9 grid gap-7 lg:grid-cols-[1fr_340px]">
         <section className="space-y-4">
           {items.map((item) => <article key={item.productId} className="flex flex-col gap-4 rounded-2xl border border-[#eee7e2] bg-white p-4 sm:flex-row sm:items-center">
-            <img src={item.image || "/produto.jpg"} alt={item.name} className="h-28 w-full rounded-xl bg-[#fff8f4] object-contain p-2 sm:w-28"/>
+            <img src={item.image || produtoImage} alt={item.name} className="h-28 w-full rounded-xl bg-[#fff8f4] object-contain p-2 sm:w-28"/>
             <div className="min-w-0 flex-1"><p className="text-[9px] font-black uppercase tracking-[.16em] text-[#ed5965]">Arquivo digital · {item.format}</p><a href={"/produto/" + item.slug} className="mt-1 block text-lg font-black hover:text-[#ed5965]">{item.name}</a><p className="mt-2 text-sm font-bold">{money(item.price)}</p></div>
             <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end"><div className="flex items-center gap-3 rounded-full border border-[#eee7e2] px-2 py-1"><button onClick={() => changeQuantity(item, item.quantity - 1)} aria-label="Diminuir quantidade" className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-[#fff0ed]"><Minus size={14}/></button><span className="min-w-5 text-center text-sm font-bold">{item.quantity}</span><button onClick={() => changeQuantity(item, item.quantity + 1)} aria-label="Aumentar quantidade" className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-[#fff0ed]"><Plus size={14}/></button></div><button onClick={() => remove(item)} className="inline-flex items-center gap-1 text-xs font-bold text-[#a49aa2] hover:text-red-600"><Trash2 size={14}/> Remover</button></div>
           </article>)}
