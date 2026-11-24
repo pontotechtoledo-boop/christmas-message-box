@@ -19,6 +19,7 @@ function CatalogPage() {
   const [sort, setSort] = useState("featured");
   const [page, setPage] = useState(1);
   const pageSize = 9;
+  const publishedProducts = getPublishedProducts();
 
   const products = useMemo(() => {
     const query = search.trim().toLocaleLowerCase("pt-BR");
@@ -64,7 +65,7 @@ function CatalogPage() {
           <div className="mb-4 flex items-center gap-2 text-sm font-bold text-[#173e43]"><SlidersHorizontal size={17}/> Categorias</div>
           <div className="flex flex-wrap gap-2 lg:flex-col lg:gap-0 lg:divide-y lg:divide-slate-100">
             <button onClick={() => setCategory("Todas")} className={`rounded-full px-3 py-2 text-left text-xs lg:rounded-none lg:px-0 ${category === "Todas" ? "bg-[#edf4f1] font-bold text-[#173e43] lg:bg-transparent" : "text-slate-500"}`}>Todas as categorias</button>
-            {catalogCategories.map((item) => <button key={item} onClick={() => setCategory(item)} className={`rounded-full px-3 py-2 text-left text-xs lg:rounded-none lg:px-0 ${category === item ? "bg-[#edf4f1] font-bold text-[#173e43] lg:bg-transparent" : "text-slate-500 hover:text-[#173e43]"}`}>{item}</button>)}
+            {catalogCategories.map((item) => { const count = publishedProducts.filter((product) => product.category === item).length; return <button key={item} onClick={() => setCategory(item)} className={`flex items-center justify-between gap-3 rounded-full px-3 py-2 text-left text-xs lg:rounded-none lg:px-0 ${category === item ? "bg-[#edf4f1] font-bold text-[#173e43] lg:bg-transparent" : "text-slate-500 hover:text-[#173e43]"}`}><span>{item}</span><span className="text-[10px] text-slate-400">{count}</span></button>; })}
           </div>
         </aside>
         <div>
