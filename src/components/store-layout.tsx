@@ -34,6 +34,7 @@ export function StoreHeader() {
       <a href="https://wa.me/5545988018222" target="_blank" rel="noreferrer" className="mt-1 flex items-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-[#26834c]"><MessageCircle size={16}/> Suporte pelo WhatsApp</a>
     </div></nav>}
   </header>;
+}
 
 export function StoreFooter() {
   return <footer className="relative mt-20 overflow-hidden border-t-4 border-white bg-[#fff0ad] text-[#34213a]">
