@@ -72,10 +72,24 @@ export function getProductBySlug(slug: string) {
   return getPublishedProducts().find((product) => product.slug === slug);
 }
 
+const relatedCategoryGroups: Record<string, string[]> = {
+  "Casais e experiências a dois": ["Jogos e desafios", "Produtos +18", "Caixas e combos"],
+  "Produtos +18": ["Casais e experiências a dois", "Jogos e desafios", "Caixas e combos"],
+  "Jogos e desafios": ["Casais e experiências a dois", "Produtos +18", "Caixas e combos"],
+  "Caixas e combos": ["Casais e experiências a dois", "Jogos e desafios"],
+  "Festas e celebrações": ["Lembrancinhas", "Presentes criativos", "Kits e combos"],
+  "Educação infantil": ["Alfabetização", "Leitura e escrita", "Matemática", "Apostilas"],
+};
+
 export function getRelatedProducts(product: StoreProduct, limit = 4) {
+  const preferredCategories = relatedCategoryGroups[product.category] || [];
   return getPublishedProducts()
-    .filter((item) => item.id !== product.id && item.category === product.category)
-    .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)))
+    .filter((item) => item.id !== product.id)
+    .sort((a, b) => {
+      const aRank = a.category === product.category ? 0 : preferredCategories.includes(a.category) ? preferredCategories.indexOf(a.category) + 1 : 99;
+      const bRank = b.category === product.category ? 0 : preferredCategories.includes(b.category) ? preferredCategories.indexOf(b.category) + 1 : 99;
+      return aRank - bRank || Number(Boolean(b.featured)) - Number(Boolean(a.featured));
+    })
     .slice(0, limit);
 }
 
