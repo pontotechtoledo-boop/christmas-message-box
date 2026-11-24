@@ -21,7 +21,8 @@ export const Route = createFileRoute("/produto/$slug")({
 
 function ProductPage() {
   const product = Route.useLoaderData();
-  const [favorite, setFavorite] = useState(false);\n  const relatedProducts = getRelatedProducts(product);
+  const [favorite, setFavorite] = useState(false);
+  const relatedProducts = getRelatedProducts(product);
   return <><StoreHeader/><main className="mx-auto min-h-screen max-w-[1160px] px-4 py-8 sm:py-12">
     <div className="mb-8 flex items-center gap-2 text-[11px] text-slate-400"><a href="/">Início</a><ChevronRight size={12}/><a href="/produtos">Produtos</a><ChevronRight size={12}/><span className="text-slate-600">{product.name}</span></div>
     <div className="grid gap-9 lg:grid-cols-2 lg:gap-14">
