@@ -13,6 +13,7 @@ export type StoreProduct = {
   publishedAt?: string;
   popularity?: number;
   isNew?: boolean;
+  details?: string[];
 };
 
 export const storeName = "Sua Loja";
@@ -46,7 +47,14 @@ export const featuredProduct: StoreProduct = {
   category: "Natal",
   price: 10,
   description:
-    "Celebre o verdadeiro sentido do Natal com uma caixa especial de mensagens cristãs. O material inclui o molde da caixa em PDF e 54 cartões com mensagens diferentes, organizados para impressão. Arquivo não editável.",
+    "Celebre o verdadeiro sentido do Natal com uma caixa especial de mensagens cristãs. O arquivo digital reúne o molde da caixa e cartões com mensagens diferentes para imprimir e montar. Material não editável.",
+  details: [
+    "Arquivo digital em PDF, não editável",
+    "Molde da caixa com dimensão final de 18 × 18 cm",
+    "54 cartões com mensagens diferentes",
+    "Cartões organizados em folhas com 9 unidades por página",
+    "Arquivo com 7 páginas para impressão",
+  ],
   shortDescription:
     "Uma lembrança especial para compartilhar fé, esperança e carinho no Natal.",
   format: "PDF",
