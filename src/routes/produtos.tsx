@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Search, SlidersHorizontal, ChevronRight, ArrowUpDown, PackageOpen } from "lucide-react";
 import { catalogCategories, getPublishedProducts, storeName } from "@/data/products";
 import produtoImage from "@/assets/produto.jpg";
+import { StoreFooter, StoreHeader } from "@/components/store-layout";
 
 export const Route = createFileRoute("/produtos")({
   head: () => ({ meta: [
@@ -50,7 +51,7 @@ function CatalogPage() {
     setSort("featured");
   }
 
-  return <main className="min-h-screen bg-white text-slate-800">
+  return <><StoreHeader/><main className="min-h-screen bg-white text-slate-800">
     <section className="bg-[#f4f7f5] px-4 py-12 sm:py-16">
       <div className="mx-auto max-w-[1160px]">
         <div className="mb-3 flex items-center gap-2 text-xs text-slate-400"><a href="/">Início</a><ChevronRight size={13}/><span className="text-slate-600">Produtos</span></div>
@@ -91,5 +92,5 @@ function CatalogPage() {
         </div>
       </div>
     </section>
-  </main>;
+  </main><StoreFooter/></>;
 }
