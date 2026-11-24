@@ -20,6 +20,7 @@ export const storeName = "Sua Loja";
 export const catalogCategories = [
   "Caixas e combos",
   "Casais e experiências a dois",
+  "Produtos +18",
   "Jogos e desafios",
   "Presentes criativos",
   "Datas comemorativas",
