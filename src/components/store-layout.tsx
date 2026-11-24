@@ -12,7 +12,7 @@ export function StoreHeader() {
     window.addEventListener("storage", refresh);
     return () => { window.removeEventListener("store-cart-updated", refresh); window.removeEventListener("storage", refresh); };
   }, []);
-  return <header className="sticky top-0 z-40 border-b border-[#f0d77d] bg-[#fff0ad] shadow-sm">
+  return <header className="sticky top-0 z-40 border-b border-white bg-[#fff0ad] shadow-sm">
     <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-4 px-4 py-4 sm:px-6">
       <a href="/" className="group flex min-w-fit items-center gap-3">
         <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#d92f78] text-white shadow-lg shadow-[#d92f78]/25"><Sparkles size={20}/></span>
@@ -29,7 +29,7 @@ export function StoreHeader() {
       </nav>
       <div className="flex items-center gap-2"><a href="/minha-conta" aria-label="Minha conta" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e8d47e] text-[#34213a] hover:border-[#d92f78] hover:text-[#b51d64] lg:hidden"><UserRound size={17}/></a><a href="/carrinho" aria-label="Carrinho" className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#e8d47e] text-[#34213a] hover:border-[#d92f78] hover:text-[#b51d64]"><ShoppingCart size={17}/>{cartCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#d92f78] px-1 text-[9px] font-black text-white">{cartCount}</span>}</a><a href="/produtos" className="inline-flex items-center gap-2 rounded-full bg-[#d92f78] px-5 py-3 text-[10px] font-black uppercase tracking-[.12em] text-white transition hover:bg-[#b51d64]">Explorar loja <ArrowUpRight size={14}/></a></div>
     </div>
-    <nav aria-label="Navegação mobile" className="flex gap-5 overflow-x-auto border-t border-[#f0d77d] bg-[#fff0ad] px-4 py-3 text-[10px] font-extrabold uppercase tracking-wider text-[#514052] lg:hidden"><a href="/">Início</a><a href="/produtos">Produtos</a><a href="/#categorias">Categorias</a><a href="/#sobre">Sobre</a><a href="/minha-conta">Minha conta</a><a href="/carrinho">Carrinho{cartCount > 0 ? ` (${cartCount})` : ""}</a><a href="https://wa.me/5545988018222" target="_blank" rel="noreferrer">Suporte</a></nav>
+    <nav aria-label="Navegação mobile" className="flex gap-5 overflow-x-auto border-t border-white bg-[#fff0ad] px-4 py-3 text-[10px] font-extrabold uppercase tracking-wider text-[#514052] lg:hidden"><a href="/">Início</a><a href="/produtos">Produtos</a><a href="/#categorias">Categorias</a><a href="/#sobre">Sobre</a><a href="/minha-conta">Minha conta</a><a href="/carrinho">Carrinho{cartCount > 0 ? ` (${cartCount})` : ""}</a><a href="https://wa.me/5545988018222" target="_blank" rel="noreferrer">Suporte</a></nav>
   </header>;
 }
 
