@@ -1,10 +1,11 @@
-import { ArrowUpRight, MessageCircle, ShoppingCart, Sparkles, UserRound } from "lucide-react";
+import { ArrowUpRight, MessageCircle, ShoppingCart, Sparkles, UserRound, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getCartCount, readCart } from "@/lib/cart";
 import { catalogCategories, slugify, storeName } from "@/data/products";
 
 export function StoreHeader() {
   const [cartCount, setCartCount] = useState(0);
+  const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => {
     const refresh = () => setCartCount(getCartCount(readCart()));
     refresh();
@@ -13,25 +14,26 @@ export function StoreHeader() {
     return () => { window.removeEventListener("store-cart-updated", refresh); window.removeEventListener("storage", refresh); };
   }, []);
   return <header className="sticky top-0 z-40 border-b border-white bg-[#fff0ad] shadow-sm">
-    <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-4 px-4 py-4 sm:px-6">
-      <a href="/" className="group flex min-w-fit items-center gap-3">
-        <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#d92f78] text-white shadow-lg shadow-[#d92f78]/25"><Sparkles size={20}/></span>
-        <span><span className="block text-xl font-black leading-none tracking-tight text-[#34213a]">{storeName}</span><span className="mt-1 block text-[9px] font-extrabold uppercase tracking-[.2em] text-[#c72570]">ideias que surpreendem</span></span>
-      </a>
+    <style>{`@media (max-width: 767px) { html, body { max-width: 100%; overflow-x: hidden; } body { -webkit-text-size-adjust: 100%; } } @media (max-width: 767px) { .mobile-menu-panel { animation: mobile-menu-in .18s ease-out both; } @keyframes mobile-menu-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } } }`}</style>
+    <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
+      <a href="/" className="group flex min-w-0 items-center gap-2.5 sm:gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#d92f78] text-white shadow-md shadow-[#d92f78]/15 sm:h-10 sm:w-10 sm:rounded-2xl"><Sparkles size={18}/></span><span className="min-w-0"><span className="block truncate text-lg font-black leading-none tracking-tight text-[#34213a] sm:text-xl">{storeName}</span><span className="mt-1 block text-[8px] font-extrabold uppercase tracking-[.16em] text-[#a94d72] sm:text-[9px] sm:tracking-[.2em]">ideias que surpreendem</span></span></a>
       <nav aria-label="Navegação principal" className="hidden items-center gap-7 text-[11px] font-extrabold uppercase tracking-[.12em] text-[#5e5663] lg:flex">
-        <a href="/" className="transition hover:text-[#c72570]">Início</a>
-        <a href="/produtos" className="transition hover:text-[#c72570]">Produtos</a>
+        <a href="/" className="transition hover:text-[#c72570]">Início</a><a href="/produtos" className="transition hover:text-[#c72570]">Produtos</a>
         <details className="group relative"><summary className="cursor-pointer list-none transition hover:text-[#c72570]">Categorias <span className="ml-1">⌄</span></summary><div className="absolute left-0 top-full z-30 mt-4 max-h-96 w-72 overflow-auto rounded-2xl border border-[#e8d47e] bg-white p-2 normal-case shadow-2xl">{catalogCategories.map((category) => <a key={category} href={"/categoria/" + slugify(category)} className="block rounded-xl px-4 py-3 text-xs font-bold text-[#514958] hover:bg-[#ffe0eb] hover:text-[#b51d64]">{category}</a>)}</div></details>
-        <a href="/#sobre" className="transition hover:text-[#c72570]">Sobre</a>
-        <a href="/minha-conta" className="inline-flex items-center gap-1 transition hover:text-[#c72570]"><UserRound size={14}/> Minha conta</a>
+        <a href="/#sobre" className="transition hover:text-[#c72570]">Sobre</a><a href="/minha-conta" className="inline-flex items-center gap-1 transition hover:text-[#c72570]"><UserRound size={14}/> Minha conta</a>
         <a href="/carrinho" className="relative inline-flex items-center gap-1 transition hover:text-[#c72570]"><ShoppingCart size={15}/> Carrinho{cartCount > 0 && <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#d92f78] px-1 text-[9px] text-white">{cartCount}</span>}</a>
         <a href="https://wa.me/5545988018222" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#159b50] transition hover:text-[#d92f78]"><MessageCircle size={14}/> Suporte</a>
       </nav>
-      <div className="flex items-center gap-2"><a href="/minha-conta" aria-label="Minha conta" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e8d47e] text-[#34213a] hover:border-[#d92f78] hover:text-[#b51d64] lg:hidden"><UserRound size={17}/></a><a href="/carrinho" aria-label="Carrinho" className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#e8d47e] text-[#34213a] hover:border-[#d92f78] hover:text-[#b51d64]"><ShoppingCart size={17}/>{cartCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#d92f78] px-1 text-[9px] font-black text-white">{cartCount}</span>}</a><a href="/produtos" className="inline-flex items-center gap-2 rounded-full bg-[#d92f78] px-5 py-3 text-[10px] font-black uppercase tracking-[.12em] text-white transition hover:bg-[#b51d64]">Explorar loja <ArrowUpRight size={14}/></a></div>
+      <div className="flex shrink-0 items-center gap-2"><a href="/carrinho" aria-label="Carrinho" className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#e8d47e] text-[#34213a] hover:border-[#d92f78] hover:text-[#b51d64]"><ShoppingCart size={17}/>{cartCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#d92f78] px-1 text-[9px] font-black text-white">{cartCount}</span>}</a>
+        <a href="/produtos" className="hidden items-center gap-2 rounded-full bg-[#d92f78] px-5 py-3 text-[10px] font-black uppercase tracking-[.12em] text-white transition hover:bg-[#b51d64] sm:inline-flex">Explorar loja <ArrowUpRight size={14}/></a>
+        <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"} aria-expanded={mobileOpen} aria-controls="mobile-navigation" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e8d47e] bg-white/60 text-[#34213a] transition hover:border-[#d92f78] lg:hidden">{mobileOpen ? <X size={20}/> : <Menu size={20}/>}</button>
+      </div>
     </div>
-    <nav aria-label="Navegação mobile" className="flex gap-5 overflow-x-auto border-t border-white bg-[#fff0ad] px-4 py-3 text-[10px] font-extrabold uppercase tracking-wider text-[#514052] lg:hidden"><a href="/">Início</a><a href="/produtos">Produtos</a><a href="/#categorias">Categorias</a><a href="/#sobre">Sobre</a><a href="/minha-conta">Minha conta</a><a href="/carrinho">Carrinho{cartCount > 0 ? ` (${cartCount})` : ""}</a><a href="https://wa.me/5545988018222" target="_blank" rel="noreferrer">Suporte</a></nav>
+    {mobileOpen && <nav id="mobile-navigation" aria-label="Navegação mobile" className="mobile-menu-panel border-t border-[#eadfae] bg-[#fff9e9] px-4 pb-4 pt-3 lg:hidden"><div className="mx-auto grid max-w-[1240px] gap-1">
+      {[[ "/", "Início" ],[ "/produtos", "Todos os produtos" ],[ "/#categorias", "Categorias" ],[ "/#sobre", "Sobre a Lírio Doce" ],[ "/minha-conta", "Minha conta" ],[ "/carrinho", cartCount > 0 ? `Meu carrinho (${cartCount})` : "Meu carrinho" ]].map(([href,label]) => <a key={href} href={href} onClick={() => setMobileOpen(false)} className="rounded-xl px-4 py-3 text-sm font-bold text-[#514958] transition hover:bg-[#fce8ef] hover:text-[#a94d72]">{label}</a>)}
+      <a href="https://wa.me/5545988018222" target="_blank" rel="noreferrer" className="mt-1 flex items-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-[#26834c]"><MessageCircle size={16}/> Suporte pelo WhatsApp</a>
+    </div></nav>}
   </header>;
-}
 
 export function StoreFooter() {
   return <footer className="relative mt-20 overflow-hidden border-t-4 border-white bg-[#fff0ad] text-[#34213a]">
