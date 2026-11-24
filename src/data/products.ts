@@ -10,30 +10,32 @@ export type StoreProduct = {
   status: "published" | "draft";
   featured?: boolean;
   image?: string;
-  /** Data de publicação no formato ISO (YYYY-MM-DD), preenchida quando o produto for cadastrado. */
   publishedAt?: string;
-  /** Número de vendas ou visualizações qualificadas, fornecido pelo painel no futuro. */
   popularity?: number;
-  /** Destaque editorial de lançamento, definido no cadastro do produto. */
   isNew?: boolean;
 };
 
 export const storeName = "Sua Loja";
 
 export const catalogCategories = [
-  "Natal",
+  "Caixas e combos",
+  "Casais e experiências a dois",
+  "Jogos e desafios",
+  "Presentes criativos",
   "Datas comemorativas",
+  "Festas e celebrações",
+  "Lembrancinhas",
+  "Natal",
+  "Educação infantil",
   "Alfabetização",
+  "Leitura e escrita",
+  "Matemática",
   "Apostilas",
   "Avaliações e sondagens",
   "Calendários",
-  "Educação infantil",
-  "Lembrancinhas",
-  "Kits e combos",
   "Painéis",
-  "Leitura e escrita",
-  "Matemática",
   "Formatura",
+  "Kits e combos",
 ];
 
 export const featuredProduct: StoreProduct = {
