@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ChevronRight, Download, Mail, Heart, ShoppingBag } from "lucide-react";
 import { getProductBySlug, getRelatedProducts, slugify, storeName } from "@/data/products";
 import produtoImage from "@/assets/produto.jpg";
+import { StoreFooter, StoreHeader } from "@/components/store-layout";
 
 export const Route = createFileRoute("/produto/$slug")({
   loader: ({ params }) => {
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/produto/$slug")({
 function ProductPage() {
   const product = Route.useLoaderData();
   const [favorite, setFavorite] = useState(false);\n  const relatedProducts = getRelatedProducts(product);
-  return <main className="mx-auto min-h-screen max-w-[1160px] px-4 py-8 sm:py-12">
+  return <><StoreHeader/><main className="mx-auto min-h-screen max-w-[1160px] px-4 py-8 sm:py-12">
     <div className="mb-8 flex items-center gap-2 text-[11px] text-slate-400"><a href="/">Início</a><ChevronRight size={12}/><a href="/produtos">Produtos</a><ChevronRight size={12}/><span className="text-slate-600">{product.name}</span></div>
     <div className="grid gap-9 lg:grid-cols-2 lg:gap-14">
       <div className="overflow-hidden rounded-2xl bg-[#f7f5ef]"><img src={product.image || produtoImage} alt={product.name} className="aspect-square w-full object-contain p-6"/></div>
@@ -36,5 +37,5 @@ function ProductPage() {
       </div>
     </div>
     <section className="mt-14 border-t border-slate-100 pt-8"><h2 className="font-serif text-2xl font-bold text-[#173e43]">Sobre este material</h2><p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600">{product.description}</p><p className="mt-3 text-xs text-slate-500">Formato: {product.format}. Confira os detalhes e as condições de acesso antes de concluir sua compra.</p></section>\n    {relatedProducts.length > 0 && <section className="mt-14 border-t border-slate-100 pt-9"><div className="flex items-end justify-between gap-4"><div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-[#b17b55]">Continue explorando</p><h2 className="mt-2 font-serif text-2xl font-bold text-[#173e43]">Produtos relacionados</h2></div><a href={`/categoria/${slugify(product.category)}`} className="text-xs font-bold text-[#b17b55] hover:underline">Ver categoria</a></div><div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{relatedProducts.map((item) => <article key={item.id} className="overflow-hidden rounded-xl border border-slate-100"><a href={`/produto/${item.slug}`}><img src={item.image || produtoImage} alt={item.name} className="aspect-square w-full bg-[#f7f5ef] object-contain p-4"/></a><div className="p-4"><a href={`/produto/${item.slug}`} className="font-serif font-bold text-[#173e43] hover:text-[#b17b55]">{item.name}</a><p className="mt-2 text-sm font-bold text-[#173e43]">{item.price === 0 ? "Gratuito" : item.price.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}</p></div></article>)}</div></section>}
-  </main>;
+  </main><StoreFooter/></>;
 }
