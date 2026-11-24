@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search, SlidersHorizontal, ChevronRight, ArrowUpDown, PackageOpen } from "lucide-react";
 import { catalogCategories, getPublishedProducts, slugify, storeName } from "@/data/products";
 import produtoImage from "@/assets/produto.jpg";
@@ -16,6 +16,8 @@ function CatalogPage() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Todas");
   const [sort, setSort] = useState("featured");
+  const [page, setPage] = useState(1);
+  const pageSize = 9;
   const products = useMemo(() => {
     const query = search.trim().toLocaleLowerCase("pt-BR");
     const filtered = getPublishedProducts().filter((product) => {
@@ -30,6 +32,10 @@ function CatalogPage() {
       return Number(Boolean(b.featured)) - Number(Boolean(a.featured));
     });
   }, [search, category, sort]);
+
+  useEffect(() => setPage(1), [search, category, sort]);
+  const pageCount = Math.max(1, Math.ceil(products.length / pageSize));
+  const visibleProducts = products.slice((page - 1) * pageSize, page * pageSize);
 
   return <main className="min-h-screen bg-white text-slate-800">
     <section className="bg-[#f4f7f5] px-4 py-12 sm:py-16">
@@ -56,10 +62,11 @@ function CatalogPage() {
           </div>
           <p className="mb-5 text-xs text-slate-400">{products.length} {products.length === 1 ? "produto encontrado" : "produtos encontrados"}</p>
           {products.length ? <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {products.map((product) => <article key={product.id} className="group overflow-hidden rounded-xl border border-slate-100 bg-white transition hover:-translate-y-1 hover:shadow-lg">
+            {visibleProducts.map((product) => <article key={product.id} className="group overflow-hidden rounded-xl border border-slate-100 bg-white transition hover:-translate-y-1 hover:shadow-lg">
               <a href={`/produto/${product.slug}`} className="block overflow-hidden bg-[#f7f5ef]"><img src={product.image || produtoImage} alt={product.name} className="aspect-square w-full object-contain p-5 transition duration-500 group-hover:scale-[1.03]"/></a>
               <div className="p-5"><p className="text-[10px] font-bold uppercase tracking-[.16em] text-[#b17b55]">{product.category}</p><a href={`/produto/${product.slug}`} className="mt-2 block font-serif text-xl font-bold text-[#173e43] hover:text-[#b17b55]">{product.name}</a><p className="mt-2 min-h-10 text-xs leading-5 text-slate-500">{product.shortDescription}</p><div className="mt-4 flex items-center justify-between"><strong className="text-lg text-[#173e43]">{product.price.toLocaleString("pt-BR", {style:"currency",currency:"BRL"})}</strong><a href={`/produto/${product.slug}`} className="rounded-full bg-[#173e43] px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-white hover:bg-[#24565b]">Ver produto</a></div></div>
             </article>)}
+          {pageCount > 1 && <nav aria-label="Paginação do catálogo" className="mt-8 flex items-center justify-center gap-2">{Array.from({length: pageCount}, (_, index) => index + 1).map((pageNumber) => <button key={pageNumber} onClick={() => {setPage(pageNumber); window.scrollTo({top: 0, behavior: "smooth"});}} aria-current={page === pageNumber ? "page" : undefined} className={`h-9 min-w-9 rounded-full px-3 text-xs font-bold ${page === pageNumber ? "bg-[#173e43] text-white" : "border border-slate-200 text-slate-600 hover:border-[#b17b55]"}`}>{pageNumber}</button>)}</nav>}
           </div> : <div className="rounded-xl border border-dashed border-slate-200 px-6 py-16 text-center"><PackageOpen className="mx-auto text-slate-300" size={32}/><h2 className="mt-4 font-serif text-xl font-bold text-[#173e43]">Nenhum produto encontrado</h2><p className="mt-2 text-sm text-slate-500">Tente outro termo ou selecione uma categoria diferente.</p><button onClick={() => {setSearch("");setCategory("Todas");}} className="mt-4 text-xs font-bold text-[#b17b55] underline">Limpar filtros</button></div>}
         </div>
       </div>
