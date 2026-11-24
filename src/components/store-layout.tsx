@@ -1,4 +1,4 @@
-import { ArrowUpRight, MessageCircle, ShoppingCart, Sparkles, UserRound, Menu, X } from "lucide-react";
+import { ArrowUpRight, MessageCircle, ShoppingCart, Sparkles, UserRound, Menu, X, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getCartCount, readCart } from "@/lib/cart";
 import { catalogCategories, slugify, storeName } from "@/data/products";
@@ -24,13 +24,20 @@ export function StoreHeader() {
         <a href="/carrinho" className="relative inline-flex items-center gap-1 transition hover:text-[#c72570]"><ShoppingCart size={15}/> Carrinho{cartCount > 0 && <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#d92f78] px-1 text-[9px] text-white">{cartCount}</span>}</a>
         <a href="https://wa.me/5545988018222" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#159b50] transition hover:text-[#d92f78]"><MessageCircle size={14}/> Suporte</a>
       </nav>
-      <div className="flex shrink-0 items-center gap-2"><a href="/carrinho" aria-label="Carrinho" className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#e8d47e] text-[#34213a] hover:border-[#d92f78] hover:text-[#b51d64]"><ShoppingCart size={17}/>{cartCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#d92f78] px-1 text-[9px] font-black text-white">{cartCount}</span>}</a>
+      <div className="flex shrink-0 items-center gap-2"><a href="/minha-conta" aria-label="Minha conta" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e8d47e] text-[#34213a] hover:border-[#d92f78] hover:text-[#b51d64] lg:hidden"><UserRound size={18}/></a><a href="/carrinho" aria-label="Carrinho" className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#e8d47e] text-[#34213a] hover:border-[#d92f78] hover:text-[#b51d64]"><ShoppingCart size={17}/>{cartCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#d92f78] px-1 text-[9px] font-black text-white">{cartCount}</span>}</a>
         <a href="/produtos" className="hidden items-center gap-2 rounded-full bg-[#d92f78] px-5 py-3 text-[10px] font-black uppercase tracking-[.12em] text-white transition hover:bg-[#b51d64] sm:inline-flex">Explorar loja <ArrowUpRight size={14}/></a>
         <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"} aria-expanded={mobileOpen} aria-controls="mobile-navigation" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e8d47e] bg-white/60 text-[#34213a] transition hover:border-[#d92f78] lg:hidden">{mobileOpen ? <X size={20}/> : <Menu size={20}/>}</button>
       </div>
     </div>
     {mobileOpen && <nav id="mobile-navigation" aria-label="Navegação mobile" className="mobile-menu-panel border-t border-[#eadfae] bg-[#fff9e9] px-4 pb-4 pt-3 lg:hidden"><div className="mx-auto grid max-w-[1240px] gap-1">
-      {[[ "/", "Início" ],[ "/produtos", "Todos os produtos" ],[ "/#categorias", "Categorias" ],[ "/#sobre", "Sobre a Lírio Doce" ],[ "/minha-conta", "Minha conta" ],[ "/carrinho", cartCount > 0 ? `Meu carrinho (${cartCount})` : "Meu carrinho" ]].map(([href,label]) => <a key={href} href={href} onClick={() => setMobileOpen(false)} className="rounded-xl px-4 py-3 text-sm font-bold text-[#514958] transition hover:bg-[#fce8ef] hover:text-[#a94d72]">{label}</a>)}
+      <a href="/" onClick={() => setMobileOpen(false)} className="rounded-xl px-4 py-3 text-sm font-bold text-[#514958] transition hover:bg-[#fce8ef] hover:text-[#a94d72]">Início</a>
+      <a href="/produtos" onClick={() => setMobileOpen(false)} className="rounded-xl px-4 py-3 text-sm font-bold text-[#514958] transition hover:bg-[#fce8ef] hover:text-[#a94d72]">Produtos</a>
+      <details className="group rounded-xl px-4 py-2 text-sm font-bold text-[#514958]">
+        <summary className="flex cursor-pointer list-none items-center justify-between py-1">Categorias <ChevronDown size={17} className="transition group-open:rotate-180"/></summary>
+        <div className="mt-2 grid gap-1 border-l-2 border-[#f0c9d9] pl-3">
+          {catalogCategories.map((category) => <a key={category} href={"/categoria/" + slugify(category)} onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-2.5 text-[13px] font-semibold text-[#665766] transition hover:bg-white hover:text-[#b51d64]">{category}</a>)}
+        </div>
+      </details>
       <a href="https://wa.me/5545988018222" target="_blank" rel="noreferrer" className="mt-1 flex items-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-bold text-[#26834c]"><MessageCircle size={16}/> Suporte pelo WhatsApp</a>
     </div></nav>}
   </header>;
