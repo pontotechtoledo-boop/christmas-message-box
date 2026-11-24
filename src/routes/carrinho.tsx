@@ -4,7 +4,7 @@ import { ArrowRight, Minus, Plus, ShoppingBag, Trash2, ShieldCheck } from "lucid
 import { StoreFooter, StoreHeader } from "@/components/store-layout";
 import { CartItem, clearCart, getCartSubtotal, readCart, removeFromCart, updateCartQuantity } from "@/lib/cart";
 import produtoImage from "@/assets/produto.jpg";
-import { storeName } from "@/data/products";
+import { getProductBySlug, getRelatedProducts, storeName } from "@/data/products";
 
 export const Route = createFileRoute("/carrinho")({
   head: () => ({ meta: [
@@ -28,6 +28,11 @@ function CartPage() {
   }, []);
   const subtotal = useMemo(() => getCartSubtotal(items), [items]);
   const money = (value: number) => value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const cartProductIds = new Set(items.map((item) => item.productId));
+  const recommendations = items.flatMap((item) => {
+    const product = getProductBySlug(item.slug);
+    return product ? getRelatedProducts(product, 4) : [];
+  }).filter((product, index, all) => !cartProductIds.has(product.id) && all.findIndex((candidate) => candidate.id === product.id) === index).slice(0, 4);
 
   function changeQuantity(item: CartItem, quantity: number) {
     setItems(updateCartQuantity(item.productId, quantity));
@@ -54,6 +59,7 @@ function CartPage() {
             <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end"><div className="flex items-center gap-3 rounded-full border border-[#eee7e2] px-2 py-1"><button onClick={() => changeQuantity(item, item.quantity - 1)} aria-label="Diminuir quantidade" className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-[#ffe0eb]"><Minus size={14}/></button><span className="min-w-5 text-center text-sm font-bold">{item.quantity}</span><button onClick={() => changeQuantity(item, item.quantity + 1)} aria-label="Aumentar quantidade" className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-[#fff0ed]"><Plus size={14}/></button></div><button onClick={() => remove(item)} className="inline-flex items-center gap-1 text-xs font-bold text-[#a49aa2] hover:text-red-600"><Trash2 size={14}/> Remover</button></div>
           </article>)}
           <button onClick={() => { clearCart(); setItems([]); }} className="text-xs font-bold text-[#9a9098] underline hover:text-red-600">Esvaziar carrinho</button>
+          {recommendations.length > 0 && <section className="mt-8 rounded-2xl border border-[#f0dca1] bg-white p-5 sm:p-6"><p className="text-[10px] font-black uppercase tracking-[.2em] text-[#c72570]">Complete sua experiência</p><h2 className="mt-2 text-xl font-black">Esses produtos também podem combinar com sua escolha</h2><div className="mt-5 grid gap-4 sm:grid-cols-2">{recommendations.map((product) => <article key={product.id} className="flex items-center gap-3 rounded-xl border border-[#f1e9e2] p-3"><img src={product.image || produtoImage} alt={product.name} className="h-20 w-20 rounded-lg bg-[#fff6dc] object-contain p-2"/><div className="min-w-0 flex-1"><a href={\`/produto/\${product.slug}\`} className="line-clamp-2 text-sm font-black text-[#34213a] hover:text-[#c72570]">{product.name}</a><p className="mt-1 text-xs font-bold text-[#c72570]">{money(product.price)}</p><a href={\`/produto/\${product.slug}\`} className="mt-2 inline-block text-[10px] font-black uppercase tracking-wider text-[#9b8d9b] hover:text-[#c72570]">Ver produto</a></div></article>)}</div></section>}
         </section>
         <aside className="h-fit rounded-[1.5rem] border border-[#eee7e2] bg-white p-6 shadow-sm">
           <h2 className="text-xl font-black">Resumo do pedido</h2>
