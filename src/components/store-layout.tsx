@@ -16,7 +16,7 @@ export function StoreHeader() {
     <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-4 px-4 py-4 sm:px-6">
       <a href="/" className="group flex min-w-fit items-center gap-3">
         <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#d92f78] text-white shadow-lg shadow-[#d92f78]/25"><Sparkles size={20}/></span>
-        <span><span className="block text-xl font-black leading-none tracking-tight text-[#251d2d]">{storeName}</span><span className="mt-1 block text-[9px] font-extrabold uppercase tracking-[.2em] text-[#c72570]">ideias que surpreendem</span></span>
+        <span><span className="block text-xl font-black leading-none tracking-tight text-[#34213a]">{storeName}</span><span className="mt-1 block text-[9px] font-extrabold uppercase tracking-[.2em] text-[#c72570]">ideias que surpreendem</span></span>
       </a>
       <nav aria-label="Navegação principal" className="hidden items-center gap-7 text-[11px] font-extrabold uppercase tracking-[.12em] text-[#5e5663] lg:flex">
         <a href="/" className="transition hover:text-[#c72570]">Início</a>
@@ -25,7 +25,7 @@ export function StoreHeader() {
         <a href="/#sobre" className="transition hover:text-[#c72570]">Sobre</a>
         <a href="/minha-conta" className="inline-flex items-center gap-1 transition hover:text-[#c72570]"><UserRound size={14}/> Minha conta</a>
         <a href="/carrinho" className="relative inline-flex items-center gap-1 transition hover:text-[#c72570]"><ShoppingCart size={15}/> Carrinho{cartCount > 0 && <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#d92f78] px-1 text-[9px] text-white">{cartCount}</span>}</a>
-        <a href="https://wa.me/5545988018222" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#159b50] transition hover:text-[#ff5b69]"><MessageCircle size={14}/> Suporte</a>
+        <a href="https://wa.me/5545988018222" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#159b50] transition hover:text-[#d92f78]"><MessageCircle size={14}/> Suporte</a>
       </nav>
       <div className="flex items-center gap-2"><a href="/minha-conta" aria-label="Minha conta" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e8d47e] text-[#34213a] hover:border-[#d92f78] hover:text-[#b51d64] lg:hidden"><UserRound size={17}/></a><a href="/carrinho" aria-label="Carrinho" className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#e8d47e] text-[#34213a] hover:border-[#d92f78] hover:text-[#b51d64]"><ShoppingCart size={17}/>{cartCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#d92f78] px-1 text-[9px] font-black text-white">{cartCount}</span>}</a><a href="/produtos" className="inline-flex items-center gap-2 rounded-full bg-[#d92f78] px-5 py-3 text-[10px] font-black uppercase tracking-[.12em] text-white transition hover:bg-[#b51d64]">Explorar loja <ArrowUpRight size={14}/></a></div>
     </div>
