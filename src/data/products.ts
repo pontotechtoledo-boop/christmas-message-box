@@ -10,6 +10,12 @@ export type StoreProduct = {
   status: "published" | "draft";
   featured?: boolean;
   image?: string;
+  /** Data de publicação no formato ISO (YYYY-MM-DD), preenchida quando o produto for cadastrado. */
+  publishedAt?: string;
+  /** Número de vendas ou visualizações qualificadas, fornecido pelo painel no futuro. */
+  popularity?: number;
+  /** Destaque editorial de lançamento, definido no cadastro do produto. */
+  isNew?: boolean;
 };
 
 export const storeName = "Sua Loja";
@@ -53,6 +59,13 @@ export function getPublishedProducts() {
 
 export function getProductBySlug(slug: string) {
   return getPublishedProducts().find((product) => product.slug === slug);
+}
+
+export function getRelatedProducts(product: StoreProduct, limit = 4) {
+  return getPublishedProducts()
+    .filter((item) => item.id !== product.id && item.category === product.category)
+    .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)))
+    .slice(0, limit);
 }
 
 export function slugify(value: string) {
