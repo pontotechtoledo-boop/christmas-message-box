@@ -84,7 +84,7 @@ const relatedCategoryGroups: Record<string, string[]> = {
 export function getRelatedProducts(product: StoreProduct, limit = 4) {
   const preferredCategories = relatedCategoryGroups[product.category] || [];
   return getPublishedProducts()
-    .filter((item) => item.id !== product.id)
+    .filter((item) => item.id !== product.id && (item.category === product.category || preferredCategories.includes(item.category)))
     .sort((a, b) => {
       const aRank = a.category === product.category ? 0 : preferredCategories.includes(a.category) ? preferredCategories.indexOf(a.category) + 1 : 99;
       const bRank = b.category === product.category ? 0 : preferredCategories.includes(b.category) ? preferredCategories.indexOf(b.category) + 1 : 99;
