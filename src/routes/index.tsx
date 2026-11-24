@@ -35,8 +35,8 @@ function HomePage() {
         <div className="relative mx-auto grid max-w-[1240px] items-center gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-[1.05fr_.95fr]">
           <div className="max-w-2xl">
             <p className="inline-flex items-center gap-2 rounded-full border border-[#9f1d67]/20 bg-white/35 px-4 py-2 text-[10px] font-black uppercase tracking-[.2em] text-[#9f1d67]"><WandSparkles size={14}/> Um universo de ideias criativas</p>
-            <h1 className="mt-7 text-5xl font-black leading-[.98] tracking-[-.055em] sm:text-7xl">Ideias que viram <span className="text-[#9f1d67]">momentos</span> inesquecíveis.</h1>
-            <p className="mt-6 max-w-xl text-sm leading-7 text-[#4b3046]/85 sm:text-base">Descubra caixas criativas, jogos, presentes digitais e materiais para celebrar, surpreender e colocar boas ideias em prática.</p>
+            <p className="mt-7 text-sm font-bold leading-6 text-white sm:text-base">Ideias que se tornam momentos inesquecíveis.</p>
+            <h1 className="mt-3 max-w-2xl text-4xl font-black leading-[1.02] tracking-[-.045em] text-white sm:text-6xl lg:text-7xl">Descubra caixas criativas, jogos, presentes digitais e materiais para celebrar, surpreender e colocar boas ideias em prática.</h1>
             <div className="mt-9 flex flex-wrap gap-3"><a href="/produtos" className="inline-flex items-center gap-3 rounded-full bg-[#9f1d67] px-7 py-4 text-[11px] font-black uppercase tracking-[.12em] text-white shadow-xl shadow-[#9f1d67]/20 transition hover:-translate-y-1 hover:bg-[#7f1553]">Quero explorar <ArrowUpRight size={16}/></a><a href="#categorias" className="rounded-full border border-[#9f1d67]/40 px-7 py-4 text-[11px] font-black uppercase tracking-[.12em] text-[#3a2343] transition hover:bg-white/35">Ver categorias</a></div>
             <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-[10px] font-bold uppercase tracking-wider text-[#56394f]/75"><span><span className="mr-2 text-[#9f1d67]">✦</span>Baixe e aproveite</span><span><span className="mr-2 text-[#9f1d67]">✦</span>Ideias para vários momentos</span></div>
           </div>
