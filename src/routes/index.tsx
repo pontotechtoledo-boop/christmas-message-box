@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, Gift, Heart, Lightbulb, Sparkles, Star, WandSparkles } from "lucide-react";
-import { catalogCategories, getPublishedProducts, slugify, storeName } from "@/data/products";
+import { slugify, storeName } from "@/data/products";
+import { getCatalog } from "@/lib/catalog.functions";
 import produtoImage from "@/assets/produto.jpg";
 import { StoreFooter, StoreHeader } from "@/components/store-layout";
 
@@ -12,11 +13,15 @@ export const Route = createFileRoute("/")({
     { property: "og:description", content: "Descubra produtos digitais para criar, presentear e surpreender." },
     { property: "og:type", content: "website" },
   ]}),
+  loader: () => getCatalog(),
+  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center">Não foi possível carregar: {error.message}</div>,
   component: HomePage,
 });
 
 function HomePage() {
-  const products = getPublishedProducts();
+  const { products: allProducts, categories } = Route.useLoaderData();
+  const products = allProducts;
+  const catalogCategories = categories.map((c) => c.name);
   const newProducts = products.filter((product) => product.isNew);
   const freeProducts = products.filter((product) => product.price === 0);
   const categoryHighlights = [

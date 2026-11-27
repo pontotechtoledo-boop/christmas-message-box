@@ -1,15 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
 import { ChevronRight, PackageOpen } from "lucide-react";
-import { catalogCategories, getPublishedProducts, slugify, storeName } from "@/data/products";
+import { storeName } from "@/data/products";
+import { getCatalog } from "@/lib/catalog.functions";
 import produtoImage from "@/assets/produto.jpg";
 import { StoreFooter, StoreHeader } from "@/components/store-layout";
 
 export const Route = createFileRoute("/categoria/$slug")({
-  loader: ({ params }) => {
-    const category = catalogCategories.find((item) => slugify(item) === params.slug);
-    return { category: category || null };
+  loader: async ({ params }) => {
+    const { categories, products } = await getCatalog();
+    const category = categories.find((item) => item.slug === params.slug)?.name ?? null;
+    return { category, products: category ? products.filter((p) => p.category === category) : [] };
   },
+  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center">Não foi possível carregar: {error.message}</div>,
   head: ({ loaderData }) => ({ meta: [
     { title: `${loaderData?.category || "Categoria"} | ${storeName}` },
     { name: "description", content: "Explore os materiais digitais desta categoria." },
@@ -18,8 +20,7 @@ export const Route = createFileRoute("/categoria/$slug")({
 });
 
 function CategoryPage() {
-  const { category } = Route.useLoaderData();
-  const products = useMemo(() => category ? getPublishedProducts().filter((product) => product.category === category) : [], [category]);
+  const { category, products } = Route.useLoaderData();
   if (!category) return <><StoreHeader/><main className="mx-auto max-w-4xl px-4 py-20 text-center"><h1 className="font-sans text-3xl font-bold text-[#34213a]">Categoria não encontrada</h1><a className="mt-5 inline-block text-sm text-[#c72570] underline" href="/produtos">Ver todos os produtos</a></main><StoreFooter/></>;
   return <><StoreHeader/><main className="mx-auto min-h-screen max-w-[1160px] px-4 py-7 sm:py-10">
     <div className="mb-7 flex items-center gap-2 text-[11px] text-slate-400"><a href="/">Início</a><ChevronRight size={12}/><a href="/produtos">Produtos</a><ChevronRight size={12}/><span className="text-slate-600">{category}</span></div>

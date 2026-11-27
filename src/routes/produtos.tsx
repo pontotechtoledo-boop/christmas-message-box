@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Search, SlidersHorizontal, ChevronRight, ArrowUpDown, PackageOpen } from "lucide-react";
-import { catalogCategories, getPublishedProducts, storeName } from "@/data/products";
+import { storeName } from "@/data/products";
+import { getCatalog } from "@/lib/catalog.functions";
 import produtoImage from "@/assets/produto.jpg";
 import { StoreFooter, StoreHeader } from "@/components/store-layout";
 
@@ -10,6 +11,8 @@ export const Route = createFileRoute("/produtos")({
     { title: "Todos os produtos | " + storeName },
     { name: "description", content: "Explore os materiais digitais disponíveis na loja." },
   ]}),
+  loader: () => getCatalog(),
+  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center">Não foi possível carregar: {error.message}</div>,
   component: CatalogPage,
 });
 
@@ -20,11 +23,12 @@ function CatalogPage() {
   const [sort, setSort] = useState("featured");
   const [page, setPage] = useState(1);
   const pageSize = 9;
-  const publishedProducts = getPublishedProducts();
+  const { products: publishedProducts, categories } = Route.useLoaderData();
+  const catalogCategories = categories.map((c) => c.name);
 
   const products = useMemo(() => {
     const query = search.trim().toLocaleLowerCase("pt-BR");
-    const filtered = getPublishedProducts().filter((product) => {
+    const filtered = publishedProducts.filter((product) => {
       const matchesCategory = category === "Todas" || product.category === category;
       const text = `${product.name} ${product.category} ${product.description} ${product.shortDescription}`.toLocaleLowerCase("pt-BR");
       const matchesType = type === "all" || (type === "new" ? Boolean(product.isNew) : product.price === 0);
@@ -38,7 +42,7 @@ function CatalogPage() {
       if (sort === "newest") return (b.publishedAt || "").localeCompare(a.publishedAt || "");
       return Number(Boolean(b.featured)) - Number(Boolean(a.featured));
     });
-  }, [search, category, type, sort]);
+  }, [search, category, type, sort, publishedProducts]);
 
   useEffect(() => setPage(1), [search, category, type, sort]);
   const pageCount = Math.max(1, Math.ceil(products.length / pageSize));

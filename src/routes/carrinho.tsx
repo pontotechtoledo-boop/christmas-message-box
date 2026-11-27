@@ -3,18 +3,21 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2, ShieldCheck } from "lucide-react";
 import { StoreFooter, StoreHeader } from "@/components/store-layout";
 import { CartItem, clearCart, getCartSubtotal, readCart, removeFromCart, updateCartQuantity } from "@/lib/cart";
+import { getCatalog } from "@/lib/catalog.functions";
 import produtoImage from "@/assets/produto.jpg";
-import { getProductBySlug, getRelatedProducts, storeName } from "@/data/products";
+import { getRelatedProducts, storeName } from "@/data/products";
 
 export const Route = createFileRoute("/carrinho")({
   head: () => ({ meta: [
     { title: "Meu carrinho | " + storeName },
     { name: "description", content: "Revise seus produtos digitais antes de pagar com segurança." },
   ]}),
+  loader: () => getCatalog(),
   component: CartPage,
 });
 
 function CartPage() {
+  const { products: catalog } = Route.useLoaderData();
   const [items, setItems] = useState<CartItem[]>([]);
   useEffect(() => {
     setItems(readCart());
@@ -30,8 +33,8 @@ function CartPage() {
   const money = (value: number) => value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   const cartProductIds = new Set(items.map((item) => item.productId));
   const recommendations = items.flatMap((item) => {
-    const product = getProductBySlug(item.slug);
-    return product ? getRelatedProducts(product, 4) : [];
+    const product = catalog.find((p) => p.slug === item.slug);
+    return product ? getRelatedProducts(product, catalog, 4) : [];
   }).filter((product, index, all) => !cartProductIds.has(product.id) && all.findIndex((candidate) => candidate.id === product.id) === index).slice(0, 4);
 
   function changeQuantity(item: CartItem, quantity: number) {

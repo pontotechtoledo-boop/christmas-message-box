@@ -14,6 +14,10 @@ export type StoreProduct = {
   popularity?: number;
   isNew?: boolean;
   details?: string[];
+  categorySlug?: string;
+  originalPrice?: number | undefined;
+  isAdult?: boolean;
+  gallery?: string[];
 };
 
 export const storeName = "Lírio Doce";
@@ -81,10 +85,10 @@ const relatedCategoryGroups: Record<string, string[]> = {
   "Educação infantil": ["Alfabetização", "Leitura e escrita", "Matemática", "Apostilas"],
 };
 
-export function getRelatedProducts(product: StoreProduct, limit = 4) {
+export function getRelatedProducts(product: StoreProduct, all: StoreProduct[] = getPublishedProducts(), limit = 4) {
   const preferredCategories = relatedCategoryGroups[product.category] || [];
-  return getPublishedProducts()
-    .filter((item) => item.id !== product.id && (item.category === product.category || preferredCategories.includes(item.category)))
+  return all
+    .filter((item) => item.id !== product.id && (product.isAdult || !item.isAdult) && (item.category === product.category || preferredCategories.includes(item.category)))
     .sort((a, b) => {
       const aRank = a.category === product.category ? 0 : preferredCategories.includes(a.category) ? preferredCategories.indexOf(a.category) + 1 : 99;
       const bRank = b.category === product.category ? 0 : preferredCategories.includes(b.category) ? preferredCategories.indexOf(b.category) + 1 : 99;
