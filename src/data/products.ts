@@ -9,8 +9,8 @@ export type StoreProduct = {
   format: "PDF" | "PNG" | "ZIP" | "Digital";
   status: "published" | "draft";
   featured?: boolean;
-  image?: string;
-  publishedAt?: string;
+  image?: string | undefined;
+  publishedAt?: string | undefined;
   popularity?: number;
   isNew?: boolean;
   details?: string[];

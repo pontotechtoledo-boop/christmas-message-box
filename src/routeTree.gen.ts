@@ -10,17 +10,30 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as MinhaContaRouteImport } from './routes/minha-conta'
 import { Route as PoliticaDePrivacidadeRouteImport } from './routes/politica-de-privacidade'
 import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria/$slug'
 import { Route as ProdutoSlugRouteImport } from './routes/produto/$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CarrinhoRoute = CarrinhoRouteImport.update({
@@ -43,10 +56,20 @@ const ProdutosRoute = ProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermosDeUsoRoute = TermosDeUsoRouteImport.update({
   id: '/termos-de-uso',
   path: '/termos-de-uso',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
   id: '/categoria/$slug',
@@ -61,32 +84,42 @@ const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/minha-conta': typeof MinhaContaRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/produtos': typeof ProdutosRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/minha-conta': typeof MinhaContaRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/produtos': typeof ProdutosRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/minha-conta': typeof MinhaContaRoute
   '/politica-de-privacidade': typeof PoliticaDePrivacidadeRoute
   '/produtos': typeof ProdutosRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
 }
@@ -94,41 +127,54 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/carrinho'
     | '/minha-conta'
     | '/politica-de-privacidade'
     | '/produtos'
+    | '/reset-password'
     | '/termos-de-uso'
+    | '/admin'
     | '/categoria/$slug'
     | '/produto/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/carrinho'
     | '/minha-conta'
     | '/politica-de-privacidade'
     | '/produtos'
+    | '/reset-password'
     | '/termos-de-uso'
+    | '/admin'
     | '/categoria/$slug'
     | '/produto/$slug'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
     | '/carrinho'
     | '/minha-conta'
     | '/politica-de-privacidade'
     | '/produtos'
+    | '/reset-password'
     | '/termos-de-uso'
+    | '/_authenticated/admin'
     | '/categoria/$slug'
     | '/produto/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   CarrinhoRoute: typeof CarrinhoRoute
   MinhaContaRoute: typeof MinhaContaRoute
   PoliticaDePrivacidadeRoute: typeof PoliticaDePrivacidadeRoute
   ProdutosRoute: typeof ProdutosRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
@@ -141,6 +187,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/carrinho': {
@@ -171,12 +231,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProdutosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/termos-de-uso': {
       id: '/termos-de-uso'
       path: '/termos-de-uso'
       fullPath: '/termos-de-uso'
       preLoaderRoute: typeof TermosDeUsoRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/categoria/$slug': {
       id: '/categoria/$slug'
@@ -195,12 +269,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   CarrinhoRoute: CarrinhoRoute,
   MinhaContaRoute: MinhaContaRoute,
   PoliticaDePrivacidadeRoute: PoliticaDePrivacidadeRoute,
   ProdutosRoute: ProdutosRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,

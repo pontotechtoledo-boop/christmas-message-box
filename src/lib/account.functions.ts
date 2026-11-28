@@ -10,7 +10,7 @@ export const getDownloadUrl = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     const { data: order } = await context.supabase.from("orders").select("id,status,user_id,email").eq("id", data.orderId).maybeSingle();
-    if (!order || order.status !== "paid" || order.user_id !== context.userId) throw new Error("Download indisponível para este pedido.");
+    if (!order || order.status !== "paid" || (order.user_id !== context.userId && order.email.toLowerCase() !== String(context.claims.email ?? "").toLowerCase())) throw new Error("Download indisponível para este pedido.");
     const { data: item } = await context.supabase.from("order_items").select("product_id").eq("order_id", order.id).eq("product_id", data.productId).maybeSingle();
     if (!item) throw new Error("Produto não pertence ao pedido.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

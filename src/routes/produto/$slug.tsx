@@ -14,7 +14,7 @@ export const Route = createFileRoute("/produto/$slug")({
     if (!product) throw notFound();
     return { product, related: getRelatedProducts(product, products) };
   },
-  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center">Não foi possível carregar: {error.message}</div>,
+  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center">Não foi possível carregar: {error instanceof Error ? error.message : String(error)}</div>,
   notFoundComponent: () => <div className="p-16 text-center"><h1 className="text-2xl font-bold">Produto não encontrado</h1><a href="/produtos" className="mt-4 inline-block underline">Ver produtos</a></div>,
   head: ({ loaderData }) => ({ meta: [
     { title: loaderData ? `${loaderData.product.name} | ${storeName}` : storeName },

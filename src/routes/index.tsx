@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
     { property: "og:type", content: "website" },
   ]}),
   loader: () => getCatalog(),
-  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center">Não foi possível carregar: {error.message}</div>,
+  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center">Não foi possível carregar: {error instanceof Error ? error.message : String(error)}</div>,
   component: HomePage,
 });
 

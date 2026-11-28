@@ -11,7 +11,7 @@ export const Route = createFileRoute("/categoria/$slug")({
     const category = categories.find((item) => item.slug === params.slug)?.name ?? null;
     return { category, products: category ? products.filter((p) => p.category === category) : [] };
   },
-  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center">Não foi possível carregar: {error.message}</div>,
+  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center">Não foi possível carregar: {error instanceof Error ? error.message : String(error)}</div>,
   head: ({ loaderData }) => ({ meta: [
     { title: `${loaderData?.category || "Categoria"} | ${storeName}` },
     { name: "description", content: "Explore os materiais digitais desta categoria." },

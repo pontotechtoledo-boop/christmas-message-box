@@ -12,7 +12,7 @@ export const Route = createFileRoute("/produtos")({
     { name: "description", content: "Explore os materiais digitais disponíveis na loja." },
   ]}),
   loader: () => getCatalog(),
-  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center">Não foi possível carregar: {error.message}</div>,
+  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center">Não foi possível carregar: {error instanceof Error ? error.message : String(error)}</div>,
   component: CatalogPage,
 });
 
